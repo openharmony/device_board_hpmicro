@@ -187,7 +187,7 @@ void board_init_clock(void)
 void board_init(void)
 {
     board_init_clock();
-
+    sysctl_set_cpu_lp_mode(HPM_SYSCTL, HPM_CORE0, cpu_lp_mode_ungate_cpu_clock);
 }
 
 void board_print_clock_freq(void)
