@@ -11,10 +11,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if BOARD_HPM6750EVK
-config BOARD
-    string
-    default "hpm6750evk"
+import("//kernel/liteos_m/liteos.gni")
+import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 
-endif #BOARD_HPM6750EVK
+module_name = get_path_info(rebase_path("."), "name")
+module_switch = defined(LOSCFG_WDT_DRIVER_TEST)
 
+hdf_driver(module_name) {
+  include_dirs = [ 
+    "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite"
+  ]
+
+  sources = [ 
+    "app_watchdog.c",
+  ]
+}

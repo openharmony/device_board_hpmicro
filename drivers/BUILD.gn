@@ -11,10 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if BOARD_HPM6750EVK
-config BOARD
-    string
-    default "hpm6750evk"
-
-endif #BOARD_HPM6750EVK
-
+import("//kernel/liteos_m/liteos.gni")
+module_name = get_path_info(rebase_path("."), "name")
+module_group(module_name) {
+  modules = []
+}
