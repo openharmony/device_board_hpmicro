@@ -128,6 +128,10 @@ void board_init_clock(void)
     clock_add_to_group(clock_ref0, 0);
     clock_add_to_group(clock_ref1, 0);
     clock_add_to_group(clock_watchdog0, 0);
+    clock_add_to_group(clock_watchdog1, 0);
+    clock_add_to_group(clock_watchdog2, 0);
+    clock_add_to_group(clock_watchdog3, 0);
+    clock_add_to_group(clock_pwdg, 0);
     clock_add_to_group(clock_eth0, 0);
     clock_add_to_group(clock_eth1, 0);
     clock_add_to_group(clock_sdp, 0);

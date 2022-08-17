@@ -11,10 +11,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if BOARD_HPM6750EVK
-config BOARD
-    string
-    default "hpm6750evk"
+if BOARD_COMPANY_HPMCIRO
 
-endif #BOARD_HPM6750EVK
+menu "Applications for HPMicro"
+config WDT_DRIVER_TEST
+    bool "watchdog driver test"
+    default n
+endmenu
+
+endif #BOARD_COMPANY_HPMCIRO
 
