@@ -11,13 +11,33 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
 import("//kernel/liteos_m/liteos.gni")
-module_name = get_path_info(rebase_path("."), "name")
-module_group(module_name) {
-  modules = [
-    "watchdog",
-    "gpio",
-  ]
-}
+import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 
+module_name = get_path_info(rebase_path("."), "name")
+module_switch = true
+
+hdf_driver(module_name) {
+  include_dirs = [ 
+    "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite"
+  ]
+
+  sources = []
+  if (defined(LOSCFG_GPIO_DRIVER_IN_TEST)) {
+    sources += [ 
+      "app_gpio_in.c",
+    ]
+  }
+
+  if (defined(LOSCFG_GPIO_DRIVER_OUT_TEST)) {
+    sources += [ 
+      "app_gpio_out.c",
+    ]
+  }
+
+  if (defined(LOSCFG_GPIO_DRIVER_IRQ_TEST)) {
+    sources += [ 
+      "app_gpio_irq.c",
+    ]
+  }
+}

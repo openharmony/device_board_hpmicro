@@ -17,6 +17,18 @@ menu "Applications for HPMicro"
 config WDT_DRIVER_TEST
     bool "watchdog driver test"
     default n
+
+config GPIO_DRIVER_IN_TEST
+    bool "gpio driver input test"
+    default n
+
+config GPIO_DRIVER_OUT_TEST
+    bool "gpio driver output test"
+    default n
+
+config GPIO_DRIVER_IRQ_TEST
+    bool "gpio driver interrupt test"
+    default n  
 endmenu
 
 endif #BOARD_COMPANY_HPMCIRO
