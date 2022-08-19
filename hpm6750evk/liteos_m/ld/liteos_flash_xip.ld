@@ -6,7 +6,7 @@
 ENTRY(_start)
 
 STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x4000;
-HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x10000;
+HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x40000;
 
 MEMORY
 {
@@ -50,11 +50,6 @@ SECTIONS
         *(.rodata*)
         *(.srodata)
         *(.srodata*)
-
-
-        
-
-
         *(.hash)
         *(.dyn*)
         *(.gnu*)
