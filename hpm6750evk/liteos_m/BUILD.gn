@@ -21,6 +21,9 @@ kernel_module(module_name) {
     "board.c",
     "driver/uart.c"
   ]
+  deps = [
+    "littlefs"
+  ]
 }
 
 config("public") {

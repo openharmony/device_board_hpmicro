@@ -17,6 +17,10 @@
 #include <stdio.h>
 #include <los_interrupt.h>
 #include "hpm_littlefs_drv.h"
+#include "hpm_csr_regs.h"
+#include "hpm_l1c_drv.h"
+
+
 
 int HpmLittlefsRead(const struct lfs_config *cfg, lfs_block_t block,
                         lfs_off_t off, void *buffer, lfs_size_t size)
@@ -28,6 +32,7 @@ int HpmLittlefsRead(const struct lfs_config *cfg, lfs_block_t block,
     uint32_t intSave = LOS_IntLock();
     hpm_stat_t status = rom_xpi_nor_read(base, xpi_xfer_channel_auto,
                                  &ctx->xpiNorConfig, (uint32_t *)buffer, chipOffset, size);
+    __asm volatile("fence.i");
     LOS_IntRestore(intSave);
     if (status != status_success) {
         printf("[%s]: read addr: %u, size: %u failed!!!\n", ctx->mountPoint, chipOffset, size);
@@ -35,6 +40,7 @@ int HpmLittlefsRead(const struct lfs_config *cfg, lfs_block_t block,
     }
     return 0;
 }
+
 
 int HpmLittlefsProg(const struct lfs_config *cfg, lfs_block_t block,
                         lfs_off_t off, const void *buffer, lfs_size_t size)
@@ -46,7 +52,10 @@ int HpmLittlefsProg(const struct lfs_config *cfg, lfs_block_t block,
     uint32_t intSave = LOS_IntLock();
     hpm_stat_t status = rom_xpi_nor_program(base, xpi_xfer_channel_auto,
                                  &ctx->xpiNorConfig, (const uint32_t *)buffer, chipOffset, size);
+
+    __asm volatile("fence.i"); /* mandatory, very important!!! */
     LOS_IntRestore(intSave);
+    
     if (status != status_success) {
         printf("[%s]: program addr: %u, size: %u failed!!!\n", ctx->mountPoint, chipOffset, size);
         return -1;
@@ -61,9 +70,8 @@ int HpmLittlefsErase(const struct lfs_config *cfg, lfs_block_t block)
     uint32_t chipOffset = cfg->block_size * block + ctx->startOffset;
     
     uint32_t intSave = LOS_IntLock();
-
-    hpm_stat_t status = rom_xpi_nor_erase(base, xpi_xfer_channel_auto, &ctx->xpiNorConfig,
-                                           chipOffset, cfg->block_size);                    
+    hpm_stat_t status = rom_xpi_nor_erase_sector(base, xpi_xfer_channel_auto, &ctx->xpiNorConfig, chipOffset);
+    __asm volatile("fence.i"); /* mandatory, very important!!! */
     LOS_IntRestore(intSave);
     if (status != status_success) {
         printf("[%s]: erase addr: %u, size: %u failed!!!\n", ctx->mountPoint, chipOffset, cfg->block_size);
@@ -82,8 +90,8 @@ int HpmLittlefsSync(const struct lfs_config *cfg)
 
 #if HPMICRO_FLASH_SELFTEST_ENABLE == 1
 
-static uint8_t rbuf[2048];
-static uint8_t wbuf[2048];
+static uint8_t rbuf[4096];
+static uint8_t wbuf[4096];
 
 static void SelfTest(const struct lfs_config *cfg)
 {
@@ -129,7 +137,7 @@ static void SelfTest(const struct lfs_config *cfg)
 }
 #endif
 
-int HpmLittlefsDriverInit(const struct lfs_config *cfg)
+int HpmLittlefsDriverInit(struct lfs_config *cfg)
 {
     struct HpmLittleCtx *ctx = (struct HpmLittleCtx *)cfg->context;
     XPI_Type *base = (XPI_Type *)ctx->base;
@@ -139,11 +147,10 @@ int HpmLittlefsDriverInit(const struct lfs_config *cfg)
     }
     ctx->isInited = 1;
 
-    printf("hpm lfs: startOffset: %u\n", ctx->startOffset);
     printf("hpm lfs: mountPoint: %s\n", ctx->mountPoint);
-    printf("hpm lfs: block_count: %u\n", cfg->block_count);
-    printf("hpm lfs: block_size: %u\n", cfg->block_size);
-
+    printf("hpm lfs: startOffset: %u\n", ctx->startOffset);
+    printf("hpm lfs: len: %u\n", ctx->len);
+    
     xpi_nor_config_option_t option;
     option.header.U = 0xfcf90001U;
     option.option0.U = 0x00000005U;
@@ -151,11 +158,19 @@ int HpmLittlefsDriverInit(const struct lfs_config *cfg)
 
     uint32_t intSave = LOS_IntLock();
     hpm_stat_t status = rom_xpi_nor_auto_config(base, &ctx->xpiNorConfig, &option);
+    rom_xpi_nor_get_property(base, &ctx->xpiNorConfig, xpi_nor_property_sector_size, &cfg->block_size);
+    cfg->block_count = ctx->len / cfg->block_size;
+    __asm volatile("fence.i");
     LOS_IntRestore(intSave);
     if (status != status_success) {
         printf("Error: rom_xpi_nor_auto_config\n");
         while (1);
     }
+
+    printf("hpm lfs: block_count: %u\n", cfg->block_count);
+    printf("hpm lfs: block_size: %u\n", cfg->block_size);
+    printf("------------------------------------------\n");
+    
 #if HPMICRO_FLASH_SELFTEST_ENABLE == 1
     SelfTest(cfg);
 #endif
