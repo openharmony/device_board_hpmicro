@@ -22,7 +22,8 @@
 struct HpmLittleCtx {
     xpi_nor_config_t xpiNorConfig;
     int isInited;
-    uint32_t startOffset; /* For partion; unit in byte */
+    uint32_t startOffset; /* The partion address in chip; unit in byte */
+    uint32_t len; /* The partion length, unit in byte */
     uint32_t base; /* XPI register base */
     char *mountPoint;
 };
@@ -33,6 +34,6 @@ int HpmLittlefsProg(const struct lfs_config *cfg, lfs_block_t block,
                         lfs_off_t off, const void *buffer, lfs_size_t size);                       
 int HpmLittlefsErase(const struct lfs_config *cfg, lfs_block_t block);
 int HpmLittlefsSync(const struct lfs_config *cfg);
-int HpmLittlefsDriverInit(const struct lfs_config *cfg);
+int HpmLittlefsDriverInit(struct lfs_config *cfg);
 
 #endif
