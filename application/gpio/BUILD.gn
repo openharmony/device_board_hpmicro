@@ -22,6 +22,8 @@ hdf_driver(module_name) {
     "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite"
   ]
 
+  cflags = [ "-Wall", "-Werror"]
+  
   sources = []
   if (defined(LOSCFG_GPIO_DRIVER_IN_TEST)) {
     sources += [ 

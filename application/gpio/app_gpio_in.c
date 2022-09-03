@@ -32,7 +32,7 @@
 #define GPIOY(pin) (pin + 32 * 14)
 #define GPIOZ(pin) (pin + 32 * 15)
 
-static void GpioDriverInTestTask(uint32_t arg)
+static void *GpioDriverInTestTask(unsigned int arg)
 {
     HILOG_INFO(HILOG_MODULE_APP, "GpioDriverInTestTask");
 
@@ -75,6 +75,7 @@ static void GpioDriverInTestTask(uint32_t arg)
 
         LOS_TaskDelay(50);
     }
+    return NULL;
 }
 
 static void GpioDriverTest(void)
@@ -84,10 +85,10 @@ static void GpioDriverTest(void)
     taskInitParam.pcName = "gpio_in_test";
     taskInitParam.pfnTaskEntry = GpioDriverInTestTask;
     taskInitParam.stackAddr = 0;
-    taskInitParam.uwStackSize = 4096;
+    taskInitParam.uwStackSize = 8192;
     taskInitParam.usTaskPrio = 20;
     taskInitParam.uwArg = 0x66;
-    uint32_t taskID;
+    UINT32 taskID;
     LOS_TaskCreate(&taskID, &taskInitParam);
 }
 

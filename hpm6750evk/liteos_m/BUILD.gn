@@ -17,6 +17,7 @@ module_name = get_path_info(rebase_path("."), "name")
 module_switch = defined(LOSCFG_BOARD_HPM6750EVK)
 kernel_module(module_name) {
   #deps = [ "$product_path/hdf_config:hdf_hcs" ]
+  cflags = [ "-Wall", "-Werror"]
   sources = [
     "board.c",
     "driver/uart.c"
