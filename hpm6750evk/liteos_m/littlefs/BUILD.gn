@@ -16,6 +16,8 @@ import("//kernel/liteos_m/liteos.gni")
 module_name = get_path_info(rebase_path("."), "name")
 module_switch = defined(LOSCFG_SUPPORT_LITTLEFS)
 kernel_module(module_name) {
+  cflags = [ "-Wall", "-Werror"]
+  
   sources = [
     "hpm_littlefs_drv.c",
     "hpm_littlefs.c"

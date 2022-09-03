@@ -21,7 +21,7 @@
 
 #define LOG_TAG "HPM_WDG"
 
-static void WatchdogDriverApiTask(uint32_t arg)
+static void *WatchdogDriverApiTask(unsigned int arg)
 {
     HILOG_INFO(HILOG_MODULE_APP, "%s", __func__);
     DevHandle handle;
@@ -65,6 +65,8 @@ static void WatchdogDriverApiTask(uint32_t arg)
     }
 
     WatchdogClose(handle);
+
+    return NULL;
 }
 
 static void WatchdogDriverTest(void)
@@ -77,7 +79,7 @@ static void WatchdogDriverTest(void)
     taskInitParam.uwStackSize = 4096;
     taskInitParam.usTaskPrio = 20;
     taskInitParam.uwArg = 0x66;
-    uint32_t taskID;
+    UINT32 taskID;
     LOS_TaskCreate(&taskID, &taskInitParam);
 }
 
