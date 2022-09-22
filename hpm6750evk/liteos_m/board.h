@@ -23,9 +23,38 @@
 
 #define BOARD_CPU_FREQ (816000000UL)
 
+
+/* enet section */
+#define BOARD_ENET_RGMII_RST_GPIO       HPM_GPIO0
+#define BOARD_ENET_RGMII_RST_GPIO_INDEX GPIO_DO_GPIOF
+#define BOARD_ENET_RGMII_RST_GPIO_PIN   (0U)
+#define BOARD_ENET_RGMII                HPM_ENET0
+#define BOARD_ENET_RGMII_TX_DLY         (5U)
+#define BOARD_ENET_RGMII_RX_DLY         (2U)
+
+#define BOARD_ENET_RGMII_PTP_CLOCK      (clock_ptp0)
+
+
+#define BOARD_ENET_RMII_RST_GPIO        HPM_GPIO0
+#define BOARD_ENET_RMII_RST_GPIO_INDEX  GPIO_DO_GPIOE
+#define BOARD_ENET_RMII_RST_GPIO_PIN    (26U)
+#define BOARD_ENET_RMII                 HPM_ENET1
+#define BOARD_ENET_RMII_INT_REF_CLK     (1U)
+
+#define BOARD_ENET_RMII_PTP_CLOCK       (clock_ptp1)
+
+
+
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);
+
+hpm_stat_t board_reset_enet_phy(ENET_Type *ptr);
+hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
+hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal);
+hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr);
+hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr);
+
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus */

@@ -15,6 +15,8 @@
 
 #include "board.h"
 #include <hpm_pllctl_drv.h>
+#include <hpm_enet_drv.h>
+#include <hpm_gpio_drv.h>
 /**
  * @brief FLASH configuration option definitions:
  * option[0]:
@@ -72,6 +74,15 @@
 __attribute__ ((section(".nor_cfg_option"))) const uint32_t option[4] = {0xfcf90001, 0x00000007, 0x0, 0x0};
 #endif
 
+void board_delay_us(uint32_t us)
+{
+    clock_cpu_delay_us(us);
+}
+
+void board_delay_ms(uint32_t ms)
+{
+    clock_cpu_delay_ms(ms);
+}
 
 void board_init_clock(void)
 {
@@ -232,4 +243,118 @@ $$ |  $$ |$$ |      $$ | \\_/ $$ |$$ |\\$$$$$$$\\ $$ |      \\$$$$$$  |\r\n\
 \\__|  \\__|\\__|      \\__|     \\__|\\__| \\_______|\\__|       \\______/\r\n\
 ----------------------------------------------------------------------\r\n"};
     printf("%s", banner);
+}
+
+static void init_enet_pins(ENET_Type *ptr)
+{
+    if (ptr == HPM_ENET0) {
+        HPM_IOC->PAD[IOC_PAD_PF00].FUNC_CTL = IOC_PF00_FUNC_CTL_GPIO_F_00;
+
+        HPM_IOC->PAD[IOC_PAD_PE22].FUNC_CTL = IOC_PE22_FUNC_CTL_ETH0_MDC;
+        HPM_IOC->PAD[IOC_PAD_PE23].FUNC_CTL = IOC_PE23_FUNC_CTL_ETH0_MDIO;
+
+        HPM_IOC->PAD[IOC_PAD_PD31].FUNC_CTL = IOC_PD31_FUNC_CTL_ETH0_RXD_0;
+        HPM_IOC->PAD[IOC_PAD_PE04].FUNC_CTL = IOC_PE04_FUNC_CTL_ETH0_RXD_1;
+        HPM_IOC->PAD[IOC_PAD_PE02].FUNC_CTL = IOC_PE02_FUNC_CTL_ETH0_RXD_2;
+        HPM_IOC->PAD[IOC_PAD_PE07].FUNC_CTL = IOC_PE07_FUNC_CTL_ETH0_RXD_3;
+        HPM_IOC->PAD[IOC_PAD_PE03].FUNC_CTL = IOC_PE03_FUNC_CTL_ETH0_RXCK;
+        HPM_IOC->PAD[IOC_PAD_PD30].FUNC_CTL = IOC_PD30_FUNC_CTL_ETH0_RXDV;
+
+        HPM_IOC->PAD[IOC_PAD_PE06].FUNC_CTL = IOC_PE06_FUNC_CTL_ETH0_TXD_0;
+        HPM_IOC->PAD[IOC_PAD_PD29].FUNC_CTL = IOC_PD29_FUNC_CTL_ETH0_TXD_1;
+        HPM_IOC->PAD[IOC_PAD_PD28].FUNC_CTL = IOC_PD28_FUNC_CTL_ETH0_TXD_2;
+        HPM_IOC->PAD[IOC_PAD_PE05].FUNC_CTL = IOC_PE05_FUNC_CTL_ETH0_TXD_3;
+        HPM_IOC->PAD[IOC_PAD_PE01].FUNC_CTL = IOC_PE01_FUNC_CTL_ETH0_TXCK;
+        HPM_IOC->PAD[IOC_PAD_PE00].FUNC_CTL = IOC_PE00_FUNC_CTL_ETH0_TXEN;
+    } else if (ptr == HPM_ENET1) {
+        HPM_IOC->PAD[IOC_PAD_PE26].FUNC_CTL = IOC_PE26_FUNC_CTL_GPIO_E_26;
+
+        HPM_IOC->PAD[IOC_PAD_PD11].FUNC_CTL = IOC_PD11_FUNC_CTL_ETH1_MDC;
+        HPM_IOC->PAD[IOC_PAD_PD14].FUNC_CTL = IOC_PD14_FUNC_CTL_ETH1_MDIO;
+
+        HPM_IOC->PAD[IOC_PAD_PE20].FUNC_CTL = IOC_PE20_FUNC_CTL_ETH1_RXD_0;
+        HPM_IOC->PAD[IOC_PAD_PE18].FUNC_CTL = IOC_PE18_FUNC_CTL_ETH1_RXD_1;
+        HPM_IOC->PAD[IOC_PAD_PE15].FUNC_CTL = IOC_PE15_FUNC_CTL_ETH1_RXDV;
+
+        HPM_IOC->PAD[IOC_PAD_PE19].FUNC_CTL = IOC_PE19_FUNC_CTL_ETH1_TXD_0;
+        HPM_IOC->PAD[IOC_PAD_PE17].FUNC_CTL = IOC_PE17_FUNC_CTL_ETH1_TXD_1;
+        HPM_IOC->PAD[IOC_PAD_PE14].FUNC_CTL = IOC_PE14_FUNC_CTL_ETH1_TXEN;
+
+        HPM_IOC->PAD[IOC_PAD_PE16].FUNC_CTL = IOC_PAD_FUNC_CTL_LOOP_BACK_MASK | IOC_PE16_FUNC_CTL_ETH1_REFCLK;
+    }
+}
+
+hpm_stat_t board_init_enet_pins(ENET_Type *ptr)
+{
+    init_enet_pins(ptr);
+
+    if (ptr == HPM_ENET0) {
+        gpio_set_pin_output_with_initial(BOARD_ENET_RGMII_RST_GPIO, BOARD_ENET_RGMII_RST_GPIO_INDEX, BOARD_ENET_RGMII_RST_GPIO_PIN, 0);
+    } else if (ptr == HPM_ENET1) {
+        gpio_set_pin_output_with_initial(BOARD_ENET_RMII_RST_GPIO, BOARD_ENET_RMII_RST_GPIO_INDEX, BOARD_ENET_RMII_RST_GPIO_PIN, 0);
+    } else {
+        return status_invalid_argument;
+    }
+
+    return status_success;
+}
+
+hpm_stat_t board_reset_enet_phy(ENET_Type *ptr)
+{
+    if (ptr == HPM_ENET0) {
+        gpio_write_pin(BOARD_ENET_RGMII_RST_GPIO, BOARD_ENET_RGMII_RST_GPIO_INDEX, BOARD_ENET_RGMII_RST_GPIO_PIN, 0);
+        //board_delay_ms(1);
+        gpio_write_pin(BOARD_ENET_RGMII_RST_GPIO, BOARD_ENET_RGMII_RST_GPIO_INDEX, BOARD_ENET_RGMII_RST_GPIO_PIN, 1);
+    } else if (ptr == HPM_ENET1) {
+        gpio_write_pin(BOARD_ENET_RMII_RST_GPIO, BOARD_ENET_RMII_RST_GPIO_INDEX, BOARD_ENET_RMII_RST_GPIO_PIN, 0);
+        //board_delay_ms(1);
+        gpio_write_pin(BOARD_ENET_RMII_RST_GPIO, BOARD_ENET_RMII_RST_GPIO_INDEX, BOARD_ENET_RMII_RST_GPIO_PIN, 1);
+    } else {
+        return status_invalid_argument;
+    }
+
+    return status_success;
+}
+
+
+hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr)
+{
+    /* set clock source */
+    if (ptr == HPM_ENET0) {
+        /* make sure pll0_clk0 output clock at 400MHz to get a clock at 100MHz for the enet0 ptp function */
+        clock_set_source_divider(clock_ptp0, clk_src_pll1_clk1, 4); /* 100MHz */
+    } else if (ptr == HPM_ENET1) {
+        /* make sure pll0_clk0 output clock at 400MHz to get a clock at 100MHz for the enet1 ptp function */
+        clock_set_source_divider(clock_ptp1, clk_src_pll1_clk1, 4); /* 100MHz */
+    } else {
+        return status_invalid_argument;
+    }
+
+    return status_success;
+}
+
+hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal)
+{
+    if (internal == false) {
+        return status_success;
+    }
+    /* Configure Enet clock to output reference clock */
+    if (ptr == HPM_ENET0) {
+        /* make sure pll2_clk1 output clock at 250MHz then set 50MHz for enet0 */
+        clock_set_source_divider(clock_eth0, clk_src_pll2_clk1, 5);
+    } else if (ptr == HPM_ENET1) {
+        /* make sure pll2_clk1 output clock at 250MHz then set 50MHz for enet1 */
+        clock_set_source_divider(clock_eth1, clk_src_pll2_clk1, 5); /* set 50MHz for enet1 */
+    } else {
+        return status_invalid_argument;
+    }
+
+    enet_rmii_enable_clock(ptr, internal);
+
+    return status_success;
+}
+
+hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr)
+{
+    return enet_rgmii_set_clock_delay(ptr, BOARD_ENET_RGMII_TX_DLY, BOARD_ENET_RGMII_RX_DLY);
 }
