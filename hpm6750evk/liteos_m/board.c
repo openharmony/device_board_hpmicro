@@ -17,6 +17,7 @@
 #include <hpm_pllctl_drv.h>
 #include <hpm_enet_drv.h>
 #include <hpm_gpio_drv.h>
+#include <hpm_pmp_drv.h>
 /**
  * @brief FLASH configuration option definitions:
  * option[0]:
@@ -198,11 +199,43 @@ void board_init_clock(void)
     clock_update_core_clock();
 }
 
+void board_init_pmp(void)
+{
+    extern uint32_t __noncacheable_start__[];
+    extern uint32_t __noncacheable_end__[];
+
+    uint32_t start_addr = (uint32_t) __noncacheable_start__;
+    uint32_t end_addr = (uint32_t) __noncacheable_end__;
+    uint32_t length = end_addr - start_addr;
+
+    if (length == 0) {
+        return;
+    }
+
+    /* Ensure the address and the length are power of 2 aligned */
+    assert((length & (length - 1U)) == 0U);
+    assert((start_addr & (length - 1U)) == 0U);
+
+    pmp_entry_t pmp_entry[1];
+    pmp_entry[0].pmp_addr = PMP_NAPOT_ADDR(start_addr, length);
+    pmp_entry[0].pmp_cfg.val = PMP_CFG(READ_EN, WRITE_EN, EXECUTE_EN, ADDR_MATCH_NAPOT, REG_UNLOCK);
+    pmp_entry[0].pma_addr = PMA_NAPOT_ADDR(start_addr, length);
+    pmp_entry[0].pma_cfg.val = PMA_CFG(ADDR_MATCH_NAPOT, MEM_TYPE_MEM_NON_CACHE_BUF, AMO_EN);
+
+    pmp_config(&pmp_entry[0], ARRAY_SIZE(pmp_entry));
+}
+
+void board_init_ahb(void)
+{
+    clock_set_source_divider(clock_ahb, clk_src_pll1_clk1, 2);/*200m hz*/
+}
 
 void board_init(void)
 {
     board_init_clock();
     sysctl_set_cpu_lp_mode(HPM_SYSCTL, HPM_CORE0, cpu_lp_mode_ungate_cpu_clock);
+    board_init_pmp();
+    board_init_ahb();
 }
 
 void board_print_clock_freq(void)
@@ -303,11 +336,11 @@ hpm_stat_t board_reset_enet_phy(ENET_Type *ptr)
 {
     if (ptr == HPM_ENET0) {
         gpio_write_pin(BOARD_ENET_RGMII_RST_GPIO, BOARD_ENET_RGMII_RST_GPIO_INDEX, BOARD_ENET_RGMII_RST_GPIO_PIN, 0);
-        //board_delay_ms(1);
+        board_delay_ms(1);
         gpio_write_pin(BOARD_ENET_RGMII_RST_GPIO, BOARD_ENET_RGMII_RST_GPIO_INDEX, BOARD_ENET_RGMII_RST_GPIO_PIN, 1);
     } else if (ptr == HPM_ENET1) {
         gpio_write_pin(BOARD_ENET_RMII_RST_GPIO, BOARD_ENET_RMII_RST_GPIO_INDEX, BOARD_ENET_RMII_RST_GPIO_PIN, 0);
-        //board_delay_ms(1);
+        board_delay_ms(1);
         gpio_write_pin(BOARD_ENET_RMII_RST_GPIO, BOARD_ENET_RMII_RST_GPIO_INDEX, BOARD_ENET_RMII_RST_GPIO_PIN, 1);
     } else {
         return status_invalid_argument;

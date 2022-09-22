@@ -18,7 +18,7 @@
 #include "ohos_init.h"
 #include "hpm_lwip.h"
 #include "ethernetif.h"
-
+#include "lwip/tcpip.h"
 
 #define ENET_DEVICE_NUM 2
 
@@ -78,11 +78,11 @@ struct HpmEnetDevice enetDev[2] = {
         },
     },
     [1] = {
-        .isEnable = 1,
+        .isEnable = 0,
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
         .infType = enet_inf_rmii,
-        .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
+        .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
         .desc = {
             .tx_desc_list_head = txDescTab1,
             .rx_desc_list_head = rxDescTab1,
@@ -119,8 +119,8 @@ void enetDevInit(struct HpmEnetDevice *dev)
     }
 
     memset(dev->desc.rx_desc_list_head, 0x00, sizeof(enet_rx_desc_t) * dev->desc.rx_buff_cfg.count);
-    memset(dev->desc.tx_desc_list_head, 0x00, sizeof(enet_rx_desc_t) * dev->desc.tx_buff_cfg.count);
-
+    memset(dev->desc.tx_desc_list_head, 0x00, sizeof(enet_tx_desc_t) * dev->desc.tx_buff_cfg.count);
+    
     enet_mac_config_t macCfg;
     macCfg.mac_addr_high[0] = dev->macAddr[5];
     macCfg.mac_addr_high[0] <<= 8;
@@ -137,7 +137,8 @@ void enetDevInit(struct HpmEnetDevice *dev)
 
     uint32_t dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
-    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
+    
+    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, 0);
 
     dev->base->INTR_MASK |= 0xFFFFFFFF;
     dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
@@ -161,8 +162,8 @@ void enetDevInit(struct HpmEnetDevice *dev)
     ip_addr_t netmask;
     ip_addr_t gw;
 
-    IP_ADDR4(&ipaddr, 192, 168, 1,8);
-    IP_ADDR4(&netmask, 255, 255, 255, 255);
+    IP_ADDR4(&ipaddr, 192, 168, 1, 8);
+    IP_ADDR4(&netmask, 255, 255, 255, 0);
     IP_ADDR4(&gw, 192, 168, 1, 1);
 
     netif_add(&dev->netif, &ipaddr, &netmask, &gw, dev, ethernetif_init, tcpip_input);
@@ -172,15 +173,16 @@ void enetDevInit(struct HpmEnetDevice *dev)
 void HpmLwipInit(void)
 {
     printf("HpmLwipInit...\n");
-    
+
+    tcpip_init(NULL, NULL);
+
     enetDevInit(&enetDev[0]);
     enetDevInit(&enetDev[1]);
 
     netif_set_default(&enetDev[0].netif);
+    netif_set_up(&enetDev[0].netif);
     
 }
 
-/* SYSEX_SERVICE_INIT(TcpIpPortingInit) is in kernel, it is priority is 2.
- * HpmLwipInit() run must at after TcpIpPortingInit, so it is 3 
- */
-SYSEX_SERVICE_INIT_PRI(HpmLwipInit, 3);
+
+APP_SERVICE_INIT(HpmLwipInit);
