@@ -42,11 +42,11 @@ static void low_level_init(struct netif *netif)
 
     /* set netif MAC hardware address */
     netif->hwaddr[0] =  dev->macAddr[0];
-    netif->hwaddr[1] =  dev->macAddr[0];
-    netif->hwaddr[2] =  dev->macAddr[0];
-    netif->hwaddr[3] =  dev->macAddr[0];
-    netif->hwaddr[4] =  dev->macAddr[0];
-    netif->hwaddr[5] =  dev->macAddr[0];
+    netif->hwaddr[1] =  dev->macAddr[1];
+    netif->hwaddr[2] =  dev->macAddr[2];
+    netif->hwaddr[3] =  dev->macAddr[3];
+    netif->hwaddr[4] =  dev->macAddr[4];
+    netif->hwaddr[5] =  dev->macAddr[5];
 
     /* set netif maximum transfer unit */
     netif->mtu = 1500;
@@ -135,6 +135,7 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
     }
     /* Prepare transmit descriptors to give to DMA*/
     frame_length += 4;
+    __asm volatile("fence.i");
     enet_prepare_transmission_descriptors(dev->base, &desc->tx_desc_list_cur, frame_length, desc->tx_buff_cfg.size);
 
     return ERR_OK;
@@ -217,7 +218,7 @@ static struct pbuf *low_level_input(struct netif *netif)
 
     /* Clear Segment_Count */
     desc->rx_frame_info.seg_count = 0;
-
+    __asm volatile("fence.i");
     return p;
 }
 
