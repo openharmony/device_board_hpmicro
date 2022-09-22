@@ -23,7 +23,7 @@ kernel_module(module_name) {
     "driver/uart.c"
   ]
   deps = [
-    "littlefs"
+    "littlefs",
   ]
 }
 
