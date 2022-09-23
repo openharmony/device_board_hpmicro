@@ -28,7 +28,12 @@ config GPIO_DRIVER_OUT_TEST
 
 config GPIO_DRIVER_IRQ_TEST
     bool "gpio driver interrupt test"
-    default n  
+    default n
+config LWIP_IPERF_TEST
+    bool "lwip iperf test"
+    default n 
+    depends on NET_LWIP_SACK
+
 endmenu
 
 endif #BOARD_COMPANY_HPMCIRO
