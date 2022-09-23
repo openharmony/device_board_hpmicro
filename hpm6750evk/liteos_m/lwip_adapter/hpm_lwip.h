@@ -31,8 +31,13 @@
 
 struct HpmEnetDevice {
     int isEnable;
+    int isDefault;
+    const char *name;
     struct netif netif;
     uint8_t macAddr[6];
+    uint8_t ip[4];
+    uint8_t gw[4];
+    uint8_t netmask[4];
     ENET_Type * base;
     uint32_t irqNum;
     enet_inf_type_t infType;

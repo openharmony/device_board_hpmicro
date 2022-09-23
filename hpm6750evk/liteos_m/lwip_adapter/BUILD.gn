@@ -23,9 +23,6 @@ kernel_module(module_name) {
             "ethernetif.c",
             "hpm_lwip.c" ]
 
-  defines = [ "LITEOS_LWIP=1" ]
-  defines += [ "CHECKSUM_BY_HARDWARE=1" ]
-
   include_dirs = [ "//utils/native/lite/include" ]
   
   visibility += [

@@ -46,21 +46,19 @@ __RW uint8_t rxBuff1[ENET_RX_BUFF_COUNT][ENET_RX_BUFF_SIZE]; /* Ethernet Receive
 static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmit Buffer */
 
-#define MAC_ADDR0   0x98
-#define MAC_ADDR1   0x2C
-#define MAC_ADDR2   0xBC
-#define MAC_ADDR3   0xB1
-#define MAC_ADDR4   0x9F
-#define MAC_ADDR5   0x17
-
 
 struct HpmEnetDevice enetDev[2] = {
     [0] = {
         .isEnable = 1,
+        .isDefault = 1,
+        .name = "geth",
         .base = BOARD_ENET_RGMII,
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rgmii,
-        .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
+        .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
+        .ip = {192, 168, 2, 5},
+        .netmask = {255, 255, 255, 0},
+        .gw = {192, 168, 2, 1},
         .desc = {
             .tx_desc_list_head = txDescTab0,
             .rx_desc_list_head = rxDescTab0,
@@ -78,11 +76,16 @@ struct HpmEnetDevice enetDev[2] = {
         },
     },
     [1] = {
-        .isEnable = 0,
+        .isEnable = 1,
+        .isDefault = 0,
+        .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
         .infType = enet_inf_rmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
+        .ip = {192, 168, 2, 7},
+        .netmask = {255, 255, 255, 0},
+        .gw = {192, 168, 2, 1},
         .desc = {
             .tx_desc_list_head = txDescTab1,
             .rx_desc_list_head = rxDescTab1,
@@ -138,7 +141,7 @@ void enetDevInit(struct HpmEnetDevice *dev)
     uint32_t dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
     
-    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, 0);
+    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
 
     dev->base->INTR_MASK |= 0xFFFFFFFF;
     dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
@@ -162,11 +165,17 @@ void enetDevInit(struct HpmEnetDevice *dev)
     ip_addr_t netmask;
     ip_addr_t gw;
 
-    IP_ADDR4(&ipaddr, 192, 168, 1, 8);
-    IP_ADDR4(&netmask, 255, 255, 255, 0);
-    IP_ADDR4(&gw, 192, 168, 1, 1);
+    IP_ADDR4(&ipaddr, dev->ip[0], dev->ip[1], dev->ip[2], dev->ip[3]);
+    IP_ADDR4(&netmask, dev->netmask[0], dev->netmask[1], dev->netmask[2], dev->netmask[3]);
+    IP_ADDR4(&gw, dev->gw[0], dev->gw[1], dev->gw[2], dev->gw[3]);
 
     netif_add(&dev->netif, &ipaddr, &netmask, &gw, dev, ethernetif_init, tcpip_input);
+
+    if (dev->isDefault) {
+        netif_set_default(&dev->netif);
+    }
+
+    netif_set_up(&dev->netif);
 }
 
 
@@ -178,10 +187,6 @@ void HpmLwipInit(void)
 
     enetDevInit(&enetDev[0]);
     enetDevInit(&enetDev[1]);
-
-    netif_set_default(&enetDev[0].netif);
-    netif_set_up(&enetDev[0].netif);
-    
 }
 
 

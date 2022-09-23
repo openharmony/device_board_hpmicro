@@ -278,7 +278,7 @@ void ethernetif_recv_start(struct netif *netif)
     /* Create host Task */
     task.pfnTaskEntry = (TSK_ENTRY_FUNC)ethernetif_recv_thread;
     task.uwStackSize = 4096;
-    task.pcName = (char *)"recv";
+    task.pcName = (char *)(dev->name);
     task.usTaskPrio = 20;
     task.uwArg = (UINTPTR)netif;
     task.uwResved = LOS_TASK_STATUS_DETACHED;
@@ -304,14 +304,15 @@ void ethernetif_recv_start(struct netif *netif)
 err_t ethernetif_init(struct netif *netif)
 {
     LWIP_ASSERT("netif != NULL", (netif != NULL));
+    struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
 
 #if LWIP_NETIF_HOSTNAME
     /* Initialize interface hostname */
     netif->hostname = "lwip";
 #endif /* LWIP_NETIF_HOSTNAME */
 
-    netif->name[0] = 'e';
-    netif->name[1] = 'n';
+    netif->name[0] = dev->name[0];
+    netif->name[1] = dev->name[1];
 
     netif->output = etharp_output;
     netif->linkoutput = low_level_output;
