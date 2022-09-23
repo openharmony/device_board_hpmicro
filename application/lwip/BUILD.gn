@@ -12,27 +12,22 @@
 # limitations under the License.
 
 import("//kernel/liteos_m/liteos.gni")
-import("$LITEOSTHIRDPARTY/lwip/lwip.gni")
-import("$LITEOSTOPDIR/components/net/lwip-2.1/lwip_porting.gni")
+import("//drivers/hdf_core/adapter/khdf/liteos_m/hdf.gni")
 
-module_switch = defined(LOSCFG_NET_LWIP_SACK)
 module_name = get_path_info(rebase_path("."), "name")
-kernel_module(module_name) {
-  sources = LWIP_PORTING_FILES + LWIPNOAPPSFILES -
-            [ "$LWIPDIR/api/sockets.c" ] + [ 
-            "ethernetif.c",
-            "hpm_lwip.c" ] + LWIPERFFILES
+module_switch = defined(LOSCFG_NET_LWIP_SACK)
 
-  include_dirs = [ "//utils/native/lite/include" ]
-  
-  visibility += [
-    "*",
+hdf_driver(module_name) {
+  include_dirs = [ 
+    "//base/hiviewdfx/hilog_lite/interfaces/native/kits/hilog_lite"
   ]
+
+  cflags = [ "-Wall", "-Werror"]
+  
+  sources = []
+  if (defined(LOSCFG_LWIP_IPERF_TEST)) {
+    sources += [ 
+      "iperf.c",
+    ]
+  }
 }
-
-# path "." must be in first for include lwip_adapter/lwipopts.h 
-config("public") {
-  include_dirs = [ "." ] + LWIP_PORTING_INCLUDE_DIRS + LWIP_INCLUDE_DIRS
-}
-
-

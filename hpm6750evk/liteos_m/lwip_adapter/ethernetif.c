@@ -264,7 +264,7 @@ VOID *ethernetif_recv_thread(UINT32 arg)
 
     while (1) {
         ethernetif_input(netif);
-        LOS_Msleep(5);
+        LOS_Msleep(1);
     }
 }
 

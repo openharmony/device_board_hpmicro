@@ -18,6 +18,7 @@ module_group(module_name) {
   modules = [
     "watchdog",
     "gpio",
+    "lwip"
   ]
 }
 
