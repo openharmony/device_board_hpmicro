@@ -20,7 +20,6 @@
 #include "ethernetif.h"
 #include "lwip/tcpip.h"
 
-#define ENET_DEVICE_NUM 2
 
 static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
 __RW enet_rx_desc_t rxDescTab0[ENET_RX_BUFF_COUNT] ; /* Ethernet Rx DMA Descriptor */
@@ -138,14 +137,19 @@ void enetDevInit(struct HpmEnetDevice *dev)
     macCfg.mac_addr_low[0] |= dev->macAddr[0];
     macCfg.valid_max_count  = 1;
 
-    uint32_t dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
+uint32_t dmaIntEnable = 0;
+
+#ifdef LWIP_RECV_INTERRUPT_MODE
+    dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
     
-    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
-
     dev->base->INTR_MASK |= 0xFFFFFFFF;
     dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
     dev->base->MMC_INTR_MASK_TX |= 0xFFFFFFFF;
+    dev->base->MMC_IPC_INTR_MASK_RX |= 0xFFFFFFFF;
+#endif
+    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
+
 
     if (dev->infType == enet_inf_rgmii) {
         rtl8211_config_t phyConfig;

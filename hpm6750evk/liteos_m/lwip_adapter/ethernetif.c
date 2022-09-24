@@ -78,8 +78,8 @@ static void low_level_init(struct netif *netif)
 static err_t low_level_output(struct netif *netif, struct pbuf *p)
 {
     struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
-    enet_desc_t *desc = &dev->desc;
-    uint32_t enet_tx_buff_size = desc->tx_buff_cfg.size;
+    __IO enet_desc_t *desc = &dev->desc;
+    __IO uint32_t enet_tx_buff_size = desc->tx_buff_cfg.size;
     struct pbuf *q;
     uint8_t *buffer;
 
@@ -152,22 +152,27 @@ static err_t low_level_output(struct netif *netif, struct pbuf *p)
 static struct pbuf *low_level_input(struct netif *netif)
 {
     struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
-    enet_desc_t *desc = &dev->desc;
-    uint32_t enet_rx_buff_size = desc->rx_buff_cfg.size;
+    __IO enet_desc_t *desc = &dev->desc;
+    __IO uint32_t enet_rx_buff_size = desc->rx_buff_cfg.size;
     struct pbuf *p = NULL, *q;
     u32_t len;
     uint8_t *buffer;
     enet_frame_t frame = {0, 0, 0};
-    enet_rx_desc_t*dma_rx_desc;
+    __IO enet_rx_desc_t*dma_rx_desc;
     uint32_t buffer_offset = 0;
     uint32_t payload_offset = 0;
     uint32_t bytes_left_to_copy = 0;
     uint32_t i = 0;
-
+#ifndef LWIP_RECV_INTERRUPT_MODE
     /* Check and get a received frame */
     if (enet_check_received_frame(&desc->rx_desc_list_cur, &desc->rx_frame_info) == 1) {
         frame = enet_get_received_frame(&desc->rx_desc_list_cur, &desc->rx_frame_info);
     }
+#else
+
+    frame = enet_get_received_frame_interrupt(&desc->rx_desc_list_cur, &desc->rx_frame_info,
+                                              desc->rx_buff_cfg.count);
+#endif
 
     /* Obtain the size of the packet and put it into the "len" variable. */
     len = frame.length;
@@ -212,8 +217,8 @@ static struct pbuf *low_level_input(struct netif *netif)
 
     /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
     for (i = 0; i < desc->rx_frame_info.seg_count; i++) {
-    dma_rx_desc->rdes0_bm.own = 1;
-    dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
+        dma_rx_desc->rdes0_bm.own = 1;
+        dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
     }
 
     /* Clear Segment_Count */
@@ -245,6 +250,9 @@ err_t ethernetif_input(struct netif *netif)
 
     /* no packet could be read, silently ignore this */
     if (p == NULL) {
+#ifndef LWIP_RECV_INTERRUPT_MODE
+        LOS_Msleep(1);
+#endif
         return ERR_MEM;
     }
 
@@ -258,15 +266,46 @@ err_t ethernetif_input(struct netif *netif)
     return err;
 }
 
-VOID *ethernetif_recv_thread(UINT32 arg)
+
+static VOID *ethernetif_recv_thread(UINT32 arg)
 {
     struct netif *netif = (struct netif *)arg;
-
+#ifdef LWIP_RECV_INTERRUPT_MODE
+    struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
+#endif
     while (1) {
+#ifdef LWIP_RECV_INTERRUPT_MODE
+        LOS_SemPend(dev->rxSemHandle, 0xffffffff);
+#endif
         ethernetif_input(netif);
-        LOS_Msleep(1);
     }
 }
+
+#ifdef LWIP_RECV_INTERRUPT_MODE
+static __attribute__((section(".interrupt.text"))) VOID hpm_enet_isr(VOID *parm)
+{
+    struct netif *netif = (struct netif *)parm;
+    struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
+
+    uint32_t status = dev->base->DMA_STATUS;
+    uint32_t istatus = dev->base->INTR_STATUS;
+
+    if (ENET_DMA_STATUS_GLPII_GET(status)) {
+        dev->base->DMA_STATUS |= ENET_DMA_STATUS_GLPII_SET(ENET_DMA_STATUS_GLPII_GET(status));
+        printf("ENET_DMA_STATUS_GLPII_GET = 0x%X\n", status);
+        printf("dev->base->INTR_MASK = 0x%X\n", dev->base->INTR_MASK);
+    }
+
+    dev->base->DMA_STATUS |= 0xffffffff;
+    if (ENET_DMA_STATUS_RI_GET(status)) {
+        dev->base->DMA_STATUS |= ENET_DMA_STATUS_RI_SET(ENET_DMA_STATUS_RI_GET(status));
+        
+        LOS_SemPost(dev->rxSemHandle);
+    } else {
+
+    }
+}
+#endif
 
 void ethernetif_recv_start(struct netif *netif)
 {
@@ -274,7 +313,14 @@ void ethernetif_recv_start(struct netif *netif)
     UINT32 taskID = LOS_ERRNO_TSK_ID_INVALID;
     UINT32 ret;
     TSK_INIT_PARAM_S task = {0};
+#ifdef LWIP_RECV_INTERRUPT_MODE
+    LOS_SemCreate(1000, &dev->rxSemHandle);
 
+    HwiIrqParam irqParam;
+    irqParam.pDevId = netif;
+    LOS_HwiCreate(HPM2LITEOS_IRQ(dev->irqNum), 1, 0, (HWI_PROC_FUNC)hpm_enet_isr, &irqParam);
+    LOS_HwiEnable(HPM2LITEOS_IRQ(dev->irqNum));
+#endif
     /* Create host Task */
     task.pfnTaskEntry = (TSK_ENTRY_FUNC)ethernetif_recv_thread;
     task.uwStackSize = 4096;

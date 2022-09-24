@@ -16,17 +16,19 @@
 #define HPMICRO_LWIPOPTS_H
 
 #include "lwip/lwipopts.h"
+#undef MEM_SIZE
+#define MEM_SIZE 128*1024
 
 #undef ETH_PAD_SIZE
 #define ETH_PAD_SIZE 0
-
+#define LWIP_TCPIP_CORE_LOCKING_INPUT 1
 /*
    --------------------------------------
    ---------- Checksum options ----------
    --------------------------------------
 */
 #undef LWIP_CHECKSUM_ON_COPY
-#define LWIP_CHECKSUM_ON_COPY           1
+#define LWIP_CHECKSUM_ON_COPY           0
 
 /*
 Some MCUs allow computing and verifying the IP, UDP, TCP and ICMP checksums by hardware:
@@ -34,7 +36,8 @@ Some MCUs allow computing and verifying the IP, UDP, TCP and ICMP checksums by h
  - To disable it and process by CPU comment the  the checksum.
 */
 
-#if LWIP_CHECKSUM_ON_COPY == 0
+#define CHECKSUM_BY_HARDWARE 1
+#if CHECKSUM_BY_HARDWARE
   /* CHECKSUM_GEN_IP==0: Generate checksums by hardware for outgoing IP packets.*/
   #define CHECKSUM_GEN_IP                 0
   /* CHECKSUM_GEN_UDP==0: Generate checksums by hardware for outgoing UDP packets.*/
