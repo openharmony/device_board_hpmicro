@@ -24,8 +24,8 @@
 #include "lwip/err.h"
 #include "lwip/netif.h"
 
-#define ENET_TX_BUFF_COUNT  (10U)
-#define ENET_RX_BUFF_COUNT  (20U)
+#define ENET_TX_BUFF_COUNT  (8)
+#define ENET_RX_BUFF_COUNT  (64)
 #define ENET_RX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
 #define ENET_TX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
 
@@ -43,6 +43,7 @@ struct HpmEnetDevice {
     enet_inf_type_t infType;
     enet_desc_t desc;
     enet_mac_config_t mac;
+    uint32_t rxSemHandle;
 };
 
 #endif
