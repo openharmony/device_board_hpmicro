@@ -24,6 +24,7 @@ kernel_module(module_name) {
   ]
   deps = [
     "littlefs",
+    "//base/startup/init/interfaces/innerkits:libbegetutil"
   ]
 }
 
