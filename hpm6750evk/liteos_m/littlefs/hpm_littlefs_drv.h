@@ -15,9 +15,9 @@
 #ifndef HPM_LITTLEFS_DRV_H
 #define HPM_LITTLEFS_DRV_H
 
-#include <lfs.h>
 #include <stdint.h>
 #include <hpm_romapi.h>
+#include <los_fs.h>
 
 struct HpmLittleCtx {
     xpi_nor_config_t xpiNorConfig;
@@ -28,12 +28,14 @@ struct HpmLittleCtx {
     char *mountPoint;
 };
 
-int HpmLittlefsRead(const struct lfs_config *cfg, lfs_block_t block,
-                        lfs_off_t off, void *buffer, lfs_size_t size);
-int HpmLittlefsProg(const struct lfs_config *cfg, lfs_block_t block,
-                        lfs_off_t off, const void *buffer, lfs_size_t size);                       
-int HpmLittlefsErase(const struct lfs_config *cfg, lfs_block_t block);
-int HpmLittlefsSync(const struct lfs_config *cfg);
-int HpmLittlefsDriverInit(struct lfs_config *cfg);
+struct HpmLittlefsCfg {
+    struct PartitionCfg cfg;
+    struct HpmLittleCtx ctx;
+};
+
+int HpmLittlefsRead(int partition, UINT32 *offset, void *buf, UINT32 size);
+int HpmLittlefsProg(int partition, UINT32 *offset, const void *buf, UINT32 size);                    
+int HpmLittlefsErase(int partition, UINT32 offset, UINT32 size);
+int HpmLittlefsDriverInit(struct HpmLittlefsCfg *cfg);
 
 #endif
