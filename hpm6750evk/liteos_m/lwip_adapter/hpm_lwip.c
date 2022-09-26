@@ -48,8 +48,8 @@ __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmi
 
 struct HpmEnetDevice enetDev[2] = {
     [0] = {
-        .isEnable = 1,
-        .isDefault = 1,
+        .isEnable = 0,
+        .isDefault = 0,
         .name = "geth",
         .base = BOARD_ENET_RGMII,
         .irqNum = IRQn_ENET0,
@@ -76,7 +76,7 @@ struct HpmEnetDevice enetDev[2] = {
     },
     [1] = {
         .isEnable = 1,
-        .isDefault = 0,
+        .isDefault = 1,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
@@ -137,17 +137,13 @@ void enetDevInit(struct HpmEnetDevice *dev)
     macCfg.mac_addr_low[0] |= dev->macAddr[0];
     macCfg.valid_max_count  = 1;
 
-uint32_t dmaIntEnable = 0;
+    uint32_t dmaIntEnable = 0;
 
-#ifdef LWIP_RECV_INTERRUPT_MODE
     dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
     
-    dev->base->INTR_MASK |= 0xFFFFFFFF;
-    dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
-    dev->base->MMC_INTR_MASK_TX |= 0xFFFFFFFF;
-    dev->base->MMC_IPC_INTR_MASK_RX |= 0xFFFFFFFF;
-#endif
+
+
     enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
 
 
