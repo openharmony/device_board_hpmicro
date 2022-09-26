@@ -21,7 +21,7 @@
 
 #undef ETH_PAD_SIZE
 #define ETH_PAD_SIZE 0
-#define LWIP_TCPIP_CORE_LOCKING_INPUT 1
+
 /*
    --------------------------------------
    ---------- Checksum options ----------
@@ -29,6 +29,16 @@
 */
 #undef LWIP_CHECKSUM_ON_COPY
 #define LWIP_CHECKSUM_ON_COPY           0
+
+#undef TCP_WND
+#define TCP_WND 8192
+
+#undef TCPIP_THREAD_STACKSIZE
+#define TCPIP_THREAD_STACKSIZE 4096
+
+#undef LWIP_CONFIG_NUM_SOCKETS
+#define LWIP_CONFIG_NUM_SOCKETS 16
+
 
 /*
 Some MCUs allow computing and verifying the IP, UDP, TCP and ICMP checksums by hardware:
