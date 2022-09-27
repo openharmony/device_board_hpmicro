@@ -16,6 +16,7 @@
 #define HPM_LITTLEFS_DRV_H
 
 #include <stdint.h>
+#include <hpm_soc.h>
 #include <hpm_romapi.h>
 #include <los_fs.h>
 
