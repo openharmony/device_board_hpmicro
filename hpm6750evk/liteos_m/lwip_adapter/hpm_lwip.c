@@ -48,14 +48,14 @@ __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmi
 
 struct HpmEnetDevice enetDev[2] = {
     [0] = {
-        .isEnable = 0,
-        .isDefault = 0,
+        .isEnable = 1,
+        .isDefault = 1,
         .name = "geth",
         .base = BOARD_ENET_RGMII,
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rgmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
-        .ip = {192, 168, 1, 35},
+        .ip = {192, 168, 2, 35},
         .netmask = {255, 255, 255, 0},
         .gw = {192, 168, 1, 1},
         .desc = {
@@ -76,7 +76,7 @@ struct HpmEnetDevice enetDev[2] = {
     },
     [1] = {
         .isEnable = 1,
-        .isDefault = 1,
+        .isDefault = 0,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
@@ -137,15 +137,14 @@ void enetDevInit(struct HpmEnetDevice *dev)
     macCfg.mac_addr_low[0] |= dev->macAddr[0];
     macCfg.valid_max_count  = 1;
 
-    uint32_t dmaIntEnable = 0;
-
-    dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
+    uint32_t dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
-    
-
-
     enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
-
+    dev->base->INTR_MASK |= 0xFFFFFFFF;
+    dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
+    dev->base->MMC_INTR_MASK_TX |= 0xFFFFFFFF;
+    dev->base->MMC_IPC_INTR_MASK_RX |= 0xFFFFFFFF;
+    enet_disable_lpi_interrupt(dev->base);
 
     if (dev->infType == enet_inf_rgmii) {
         rtl8211_config_t phyConfig;
