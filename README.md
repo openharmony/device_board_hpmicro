@@ -1,39 +1,55 @@
 # device_board_hpmicro
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+- [简介](#简介)
+- [开发板规格](#开发板规格)
+- [openharmony关键特性](#openharmony关键特性)
+- [相关仓库](#相关仓库)
+- [联系](#联系)
 
-#### 软件架构
-软件架构说明
+## 简介
+HPM6750EVK2提供了HPM6750微控制器大部分外设的接口，包括1个复位按键，2个通用按键, 1个RGB三色LED，板载usb转uart接口，摄像头接口，1个SD卡槽，2个USB Type-C接口，1个千兆网口、一个百兆网口，CAN FD接口，音频接口等，并扩展了NOR Flash，SDRAM等外接存储器。如果有兴趣了解更多相关信息，可以在 [先楫主页](http://www.hpmicro.com/resources/resources.html) 中进行浏览。
 
+开发板视图如下：
 
-#### 安装教程
+![开发板视图](figures/hpm6750evk2.png)
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## 开发板规格
 
-#### 使用说明
+| 器件类别     |              开发板              |
+| ---------- | -------------------------------- |
+| CPU        | HPM6750, RISC-V (Max: 816MHz) |
+| RAM        | 2048KB SRAM |
+| SDRAM      | 32M
+| Flash      | 16MB SPI Flash |
+| Ethernet0  | 千兆 |
+| Ethernet1  | 百兆 |
+| USB        | 2路高速OTG-USB |
+| CAN FD     | 1路 |
 
-1.  xxxx
-2.  xxxx
-3.  xxxx
+## OpenHarmony关键特性
 
-#### 参与贡献
+| 组件名       | 能力介绍                                                                                       |
+| -------------- | ------------------------------------------------------------------------------------------------ |
+| 内核         | LiteOS-M                                                                                        |
+| 上电启动     | 上电启动OpenHarmony                                                                          |
+| 外设控制     | 提供操作外设的能力，包括：I2C、UART、SPI、GPIO、FLASH等。                      |
+| 系统服务管理 | 系统服务管理基于面向服务的架构，提供了OpenHarmony统一化的系统服务开发框架。                  |
+| 启动引导     | 提供系统服务的启动入口标识。在系统服务管理启动时，调用boostrap标识的入口函数，并启动系统服务。 |
+| 系统属性     | 提供获取与设置系统属性的能力。                                                                   |
+| 基础库       | 提供公共基础库能力，包括：文件操作。                                                      |
+| 网络       | 提供Lwip协议栈适配，支持双路以太网。                                                      |
+| DFX          | 提供DFX能力，包括：流水日志等。                                                     |
+| HDF           | 提供OpenHarmony硬件配置驱动的能力。                                                         |
+| XTS          | 提供OpenHarmony生态认证测试套件的集合能力。                                                    |
 
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+## 相关仓库
 
+[vendor_hpmicro](https://gitee.com/openharmony-sig/vendor_hpmicro)
 
-#### 特技
+[device_soc_hpmicro](https://gitee.com/openharmony-sig/device_soc_hpmicro)
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+[device_board_hpmicro](https://gitee.com/openharmony-sig/device_board_hpmicro)
+
+## 联系
+
+如果您在开发过程中有问题，请在仓库[issues](https://gitee.com/openharmony-sig/device_board_hpmicro/issues)提问。
