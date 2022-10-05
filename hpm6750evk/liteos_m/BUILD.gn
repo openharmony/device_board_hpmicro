@@ -48,6 +48,18 @@ config("public") {
   foreach(force_link_lib, force_link_libs) {
     ldflags += [ "-l${force_link_lib}" ]
   }
+
+  if (build_xts == true) {
+    ldflags += [
+      "-lhctest",
+      "-lmodule_ActsParameterTest",
+      "-lmodule_ActsBootstrapTest",
+      "-lmodule_ActsHieventLiteTest",
+      "-lmodule_ActsDfxFuncTest",
+      "-lmodule_ActsSamgrTest"
+    ]
+  }
+
   ldflags += [ "-Wl,--no-whole-archive" ]
 
   libs = [
