@@ -241,7 +241,7 @@ void board_init(void)
 void board_print_clock_freq(void)
 {
     printf("==============================\r\n");
-    printf(" %s clock summary\r\n", "HPM6750EVK");
+    printf(" %s clock summary\r\n", "HPM6750EVK2");
     printf("==============================\r\n");
     printf("cpu0:\t\t %dHz\r\n", clock_get_frequency(clock_cpu0));
     printf("cpu1:\t\t %dHz\r\n", clock_get_frequency(clock_cpu1));
