@@ -23,7 +23,9 @@ kernel_module(module_name) {
             "ethernetif.c",
             "hpm_lwip.c" ] + LWIPERFFILES
 
-  include_dirs = [ "//utils/native/lite/include" ]
+  include_dirs = [ 
+    "//utils/native/lite/include",
+    "//commonlibrary/utils_lite/include" ]
   
   visibility += [
     "*",
