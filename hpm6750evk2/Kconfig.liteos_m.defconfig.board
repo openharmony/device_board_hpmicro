@@ -11,8 +11,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-config BOARD_HPM6750EVK
-    bool "hpm6750evk"
-    select BOARD_COMPANY_HPMCIRO
-    depends on SOC_COMPANY_HPMICRO
+if BOARD_HPM6750EVK2
+config BOARD
+    string
+    default "hpm6750evk2"
+
+endif #BOARD_HPM6750EVK2
 

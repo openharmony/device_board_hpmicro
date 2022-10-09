@@ -19,21 +19,12 @@ if (ohos_kernel_type == "liteos_m") {
       "drivers",
       "application"
     ]
-    if (defined(LOSCFG_BOARD_HPM6750EVK)) {
+    if (defined(LOSCFG_BOARD_HPM6750EVK2)) {
       modules += [
-        "hpm6750evk",
+        "hpm6750evk2",
       ]
     }
-    if (defined(LOSCFG_BOARD_HPM6750EVKMINI)) {
-      modules += [
-        "hpm6750evkmini",
-      ]
-    }
-    if (defined(LOSCFG_BOARD_HPM6300EVK)) {
-      modules += [
-        "hpm6300evk",
-      ]
-    }
+    
     modules += [
       "${product_path}/hdf_config",
     ]

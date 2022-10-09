@@ -11,10 +11,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if BOARD_HPM6750EVK
-config BOARD
-    string
-    default "hpm6750evk"
-
-endif #BOARD_HPM6750EVK
+config BOARD_HPM6750EVK2
+    bool "hpm6750evk2"
+    select BOARD_COMPANY_HPMCIRO
+    depends on SOC_COMPANY_HPMICRO
 
