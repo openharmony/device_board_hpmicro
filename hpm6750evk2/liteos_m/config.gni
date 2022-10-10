@@ -78,6 +78,7 @@ board_cflags = [
   "-D_BSD_SOURCE",
   "-Wformat=0",
   "-DLOSCFG_BASE_CORE_HILOG",
+  "-U_FORTIFY_SOURCE"
 ]
 
 board_cflags += board_opt_flags
