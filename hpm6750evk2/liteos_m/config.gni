@@ -104,7 +104,10 @@ board_ld_flags += [
 ]
 
 # Board related headfiles search path.
-board_include_dirs = [ "//utils/native/lite/include" ]
+board_include_dirs = [ 
+  "//utils/native/lite/include",
+  "//third_party/mbedtls/include",
+  "//third_party/bounds_checking_function/include", ]
 
 # Board adapter dir for OHOS components.
 board_adapter_dir = ""
