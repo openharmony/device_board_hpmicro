@@ -17,7 +17,6 @@ if (ohos_kernel_type == "liteos_m") {
   module_group(module_name) {
     modules = [
       "drivers",
-      "application"
     ]
     if (defined(LOSCFG_BOARD_HPM6750EVK2)) {
       modules += [
@@ -27,6 +26,7 @@ if (ohos_kernel_type == "liteos_m") {
     
     modules += [
       "${product_path}/hdf_config",
+      "${product_path}/application",
     ]
   }
 }
