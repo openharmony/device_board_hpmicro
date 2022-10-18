@@ -41,16 +41,16 @@ HPM6750EVK2提供了HPM6750微控制器大部分外设的接口，包括1个复�
 
 ## 开发板开发指南
 
-[开发指南](https://gitee.com/openharmony-sig/device_soc_hpmicro)
+[开发指南](https://gitee.com/openharmony/device_soc_hpmicro)
 
 ## 相关仓库
 
-[vendor_hpmicro](https://gitee.com/openharmony-sig/vendor_hpmicro)
+[vendor_hpmicro](https://gitee.com/openharmony/vendor_hpmicro)
 
-[device_soc_hpmicro](https://gitee.com/openharmony-sig/device_soc_hpmicro)
+[device_soc_hpmicro](https://gitee.com/openharmony/device_soc_hpmicro)
 
-[device_board_hpmicro](https://gitee.com/openharmony-sig/device_board_hpmicro)
+[device_board_hpmicro](https://gitee.com/openharmony/device_board_hpmicro)
 
 ## 联系
 
-如果您在开发过程中有问题，请在仓库[issues](https://gitee.com/openharmony-sig/device_board_hpmicro/issues)提问。
+如果您在开发过程中有问题，请在仓库[issues](https://gitee.com/openharmony/device_board_hpmicro/issues)提问。
