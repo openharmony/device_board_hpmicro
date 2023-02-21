@@ -52,14 +52,11 @@ config("public") {
   if (build_xts == true) {
     ldflags += [
       "-lhctest",
-      "-lmodule_ActsParameterTest",
       "-lmodule_ActsBootstrapTest",
       "-lmodule_ActsHieventLiteTest",
       "-lmodule_ActsDfxFuncTest",
       "-lmodule_ActsSamgrTest",
       "-lmodule_ActsUtilsFileTest",
-      "-lmodule_ActsUpdaterFuncTest",
-      "-lmodule_ActsHuksHalFunctionTest",
       "-lhuks_test_common",
     ]
   }
