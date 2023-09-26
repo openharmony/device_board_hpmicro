@@ -1,0 +1,10 @@
+{
+  "parts": {
+    "device_hpm6750evk2": {
+      "module_list": [
+        "//device/soc/hpmicro/hpm6700"
+      ]
+    }
+  },
+  "subsystem": "device_hpm6750evk2"
+}
