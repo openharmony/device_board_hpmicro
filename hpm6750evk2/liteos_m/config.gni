@@ -68,6 +68,7 @@ board_cflags = [
   "-fno-builtin",
   "-O2",
   "-static",
+  "-nostdlib",
   "-fno-common",
   "-fno-stack-protector",
   "-fno-omit-frame-pointer",
@@ -75,7 +76,6 @@ board_cflags = [
   "-D__RISC_V__",
   "-D__LITEOS_M__",
   "-DLWIP_SUPPORT_CUSTOM_PBUF=1",
-  "-D_BSD_SOURCE",
   "-Wformat=0",
   "-DLOSCFG_BASE_CORE_HILOG",
   "-U_FORTIFY_SOURCE"
