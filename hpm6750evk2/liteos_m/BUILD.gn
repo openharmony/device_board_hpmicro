@@ -56,7 +56,6 @@ config("public") {
       "-lmodule_ActsHieventLiteTest",
       "-lmodule_ActsDfxFuncTest",
       "-lmodule_ActsSamgrTest",
-      "-lmodule_ActsUtilsFileTest",
       "-lhuks_test_common",
     ]
   }
