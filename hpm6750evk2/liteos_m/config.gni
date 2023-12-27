@@ -101,6 +101,7 @@ board_ld_flags += [
   "-Wl,--wrap,_calloc_r",
   "-Wl,--wrap=printf",
   "-Wl,--whole-archive",
+  "-Wl,--print-memory-usage",
 ]
 
 # Board related headfiles search path.
