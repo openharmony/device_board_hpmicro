@@ -267,17 +267,24 @@ SECTIONS
         . = ALIGN(8);
     } > AXI_SRAM
 
-    .noncacheable : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__){
+    __noncacheable_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.fast);
+    .noncacheable.init : AT(__noncacheable_init_load_addr__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
         __noncacheable_init_end__ = .;
+        . = ALIGN(8);
+    } > AXI_SRAM_NONCACHEABLE
+
+    .noncacheable.bss (NOLOAD) : {
+        . = ALIGN(8);
         KEEP(*(.noncacheable))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
         __noncacheable_bss_end__ = .;
         . = ALIGN(8);
     } > AXI_SRAM_NONCACHEABLE
+
 
     .stack : {
         . = ALIGN(8);
