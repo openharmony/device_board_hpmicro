@@ -55,9 +55,9 @@ struct HpmEnetDevice enetDev[2] = {
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rgmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
-        .ip = {192, 168, 2, 35},
+        .ip = {192, 168, 50, 224},
         .netmask = {255, 255, 255, 0},
-        .gw = {192, 168, 1, 1},
+        .gw = {192, 168, 50, 1},
         .desc = {
             .tx_desc_list_head = txDescTab0,
             .rx_desc_list_head = rxDescTab0,
@@ -75,16 +75,16 @@ struct HpmEnetDevice enetDev[2] = {
         },
     },
     [1] = {
-        .isEnable = 1,
+        .isEnable = 0,
         .isDefault = 0,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
         .infType = enet_inf_rmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
-        .ip = {192, 168, 1, 88},
+        .ip = {192, 168, 50, 223},
         .netmask = {255, 255, 255, 0},
-        .gw = {192, 168, 1, 1},
+        .gw = {192, 168, 50, 1},
         .desc = {
             .tx_desc_list_head = txDescTab1,
             .rx_desc_list_head = rxDescTab1,
@@ -141,9 +141,6 @@ void enetDevInit(struct HpmEnetDevice *dev)
                             | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
     enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
     dev->base->INTR_MASK |= 0xFFFFFFFF;
-    dev->base->MMC_INTR_MASK_RX |= 0xFFFFFFFF;
-    dev->base->MMC_INTR_MASK_TX |= 0xFFFFFFFF;
-    dev->base->MMC_IPC_INTR_MASK_RX |= 0xFFFFFFFF;
     enet_disable_lpi_interrupt(dev->base);
 
     if (dev->infType == enet_inf_rgmii) {

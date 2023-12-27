@@ -16,6 +16,16 @@
 #define HPMICRO_LWIPOPTS_H
 
 #include "lwip/lwipopts.h"
+
+#include "arch/cc.h"
+
+#ifdef LWIP_LOGGER
+#undef LWIP_LOGGER
+#define LWIP_LOGGER(msg) printf("%s",msg)
+#endif
+
+
+
 #undef MEM_SIZE
 #define MEM_SIZE 128*1024
 
@@ -77,6 +87,52 @@ Some MCUs allow computing and verifying the IP, UDP, TCP and ICMP checksums by h
   #define CHECKSUM_CHECK_TCP              1
   /* CHECKSUM_CHECK_ICMP==1: Check checksums by hardware for incoming ICMP packets.*/
   #define CHECKSUM_GEN_ICMP               1
+#endif
+
+#undef LWIP_DEBUG
+#define LWIP_DEBUG 0
+#if LWIP_DEBUG
+#define ETHARP_DEBUG                    LWIP_DBG_ON
+#define NETIF_DEBUG                     LWIP_DBG_ON
+#define PBUF_DEBUG                      LWIP_DBG_OFF
+#define API_LIB_DEBUG                   LWIP_DBG_OFF
+#define API_MSG_DEBUG                   LWIP_DBG_OFF
+#define SOCKETS_DEBUG                   LWIP_DBG_OFF
+#define ICMP_DEBUG                      LWIP_DBG_OFF
+#define IGMP_DEBUG                      LWIP_DBG_OFF
+#define INET_DEBUG                      LWIP_DBG_OFF
+#define IP_DEBUG                        LWIP_DBG_OFF
+#define DRIVERIF_DEBUG                  LWIP_DBG_OFF
+#define IP_REASS_DEBUG                  LWIP_DBG_OFF
+#define RAW_DEBUG                       LWIP_DBG_OFF
+#define MEM_DEBUG                       LWIP_DBG_OFF
+#define MEMP_DEBUG                      LWIP_DBG_OFF
+#define SYS_DEBUG                       LWIP_DBG_OFF
+#define TIMERS_DEBUG                    LWIP_DBG_OFF
+#define TCP_DEBUG                       LWIP_DBG_OFF
+#define TCP_ERR_DEBUG                   LWIP_DBG_OFF
+#define TCP_INPUT_DEBUG                 LWIP_DBG_OFF
+#define TCP_FR_DEBUG                    LWIP_DBG_OFF
+#define TCP_RTO_DEBUG                   LWIP_DBG_OFF
+#define TCP_CWND_DEBUG                  LWIP_DBG_OFF
+#define TCP_WND_DEBUG                   LWIP_DBG_OFF
+#define TCP_OUTPUT_DEBUG                LWIP_DBG_OFF
+#define TCP_RST_DEBUG                   LWIP_DBG_OFF
+#define TCP_QLEN_DEBUG                  LWIP_DBG_OFF
+#define TCP_SACK_DEBUG                  LWIP_DBG_OFF
+#define TCP_TLP_DEBUG                   LWIP_DBG_OFF
+#define UDP_DEBUG                       LWIP_DBG_OFF
+#define TCPIP_DEBUG                     LWIP_DBG_OFF
+#define SLIP_DEBUG                      LWIP_DBG_OFF
+#define DHCP_DEBUG                      LWIP_DBG_OFF
+#define AUTOIP_DEBUG                    LWIP_DBG_OFF
+#define DNS_DEBUG                       LWIP_DBG_OFF
+#define TFTP_DEBUG                      LWIP_DBG_OFF
+#define SYS_ARCH_DEBUG                  LWIP_DBG_OFF
+#define SNTP_DEBUG                      LWIP_DBG_OFF
+#define IP6_DEBUG                       LWIP_DBG_OFF
+#define DHCP6_DEBUG                     LWIP_DBG_OFF
+#define DRV_STS_DEBUG                   LWIP_DBG_OFF
 #endif
 
 #endif
