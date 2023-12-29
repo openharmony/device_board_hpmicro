@@ -67,9 +67,6 @@ config("public") {
     "stdc++",
   ]
   cflags_c = [
-      "-U__INT32_TYPE__",
-      "-D__INT32_TYPE__=int",
-      "-DLWIP_NO_CTYPE_H=1",
       "-DFLASH_XIP=1",
       "-DUSE_NONVECTOR_MODE",
       "-DDISABLE_IRQ_PREEMPTIVE",
