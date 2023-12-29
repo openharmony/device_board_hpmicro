@@ -25,8 +25,6 @@ if (ohos_kernel_type == "liteos_m") {
     }
     
     modules += [
-      "${product_path}/hdf_config",
-      "${product_path}/application",
     ]
   }
 }
