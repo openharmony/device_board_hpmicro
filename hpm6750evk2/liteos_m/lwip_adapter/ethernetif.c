@@ -283,18 +283,34 @@ static __attribute__((section(".interrupt.text"))) VOID hpm_enet_isr(VOID *parm)
 {
     struct netif *netif = (struct netif *)parm;
     struct HpmEnetDevice *dev = (struct HpmEnetDevice *)netif->state;
+    ENET_Type *ptr = dev->base;
 
-    uint32_t status = dev->base->DMA_STATUS;
+    uint32_t status;
+    uint32_t rxgbfrmis;
+    uint32_t intr_status;
+
+    status = ptr->DMA_STATUS;
+    rxgbfrmis = ptr->MMC_INTR_RX;
+    intr_status = ptr->INTR_STATUS;
 
     if (ENET_DMA_STATUS_GLPII_GET(status)) {
-        dev->base->DMA_STATUS |= ENET_DMA_STATUS_GLPII_SET(ENET_DMA_STATUS_GLPII_GET(status));
+        /* read LPI_CSR to clear interrupt status */
+        ptr->LPI_CSR;
+    }
+
+    if (ENET_INTR_STATUS_RGSMIIIS_GET(intr_status)) {
+        /* read XMII_CSR to clear interrupt status */
+        ptr->XMII_CSR;
     }
 
     if (ENET_DMA_STATUS_RI_GET(status)) {
-        dev->base->DMA_STATUS |= ENET_DMA_STATUS_RI_SET(ENET_DMA_STATUS_RI_GET(status));
+        /* Give the semaphore to wakeup LwIP task */
+        ptr->DMA_STATUS |= ENET_DMA_STATUS_RI_MASK;
         LOS_SemPost(dev->rxSemHandle);
-    } else {
-        printf("error ---status = 0x%X\n", status);
+    }
+
+    if (ENET_MMC_INTR_RX_RXCTRLFIS_GET(rxgbfrmis)) {
+        ptr->RXFRAMECOUNT_GB;
     }
 }
 

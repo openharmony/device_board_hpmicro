@@ -103,7 +103,7 @@ void board_init_clock(void)
     clock_add_to_group(clock_axi1, 0);
     clock_add_to_group(clock_axi2, 0);
     clock_add_to_group(clock_ahb, 0);
-    clock_add_to_group(clock_dram, 0);
+    clock_add_to_group(clock_femc, 0);
     clock_add_to_group(clock_xpi0, 0);
     clock_add_to_group(clock_xpi1, 0);
     clock_add_to_group(clock_gptmr0, 0);
@@ -253,7 +253,7 @@ void board_print_clock_freq(void)
     printf("mchtmr1:\t %dHz\r\n", clock_get_frequency(clock_mchtmr1));
     printf("xpi0:\t\t %dHz\r\n", clock_get_frequency(clock_xpi0));
     printf("xpi1:\t\t %dHz\r\n", clock_get_frequency(clock_xpi1));
-    printf("dram:\t\t %dHz\r\n", clock_get_frequency(clock_dram));
+    printf("femc:\t\t %dHz\r\n", clock_get_frequency(clock_femc));
     printf("display:\t %dHz\r\n", clock_get_frequency(clock_display));
     printf("cam0:\t\t %dHz\r\n", clock_get_frequency(clock_camera0));
     printf("cam1:\t\t %dHz\r\n", clock_get_frequency(clock_camera1));

@@ -137,10 +137,27 @@ void enetDevInit(struct HpmEnetDevice *dev)
     macCfg.mac_addr_low[0] |= dev->macAddr[0];
     macCfg.valid_max_count  = 1;
 
-    uint32_t dmaIntEnable = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
-                            | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */ 
-    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, dmaIntEnable);
-    dev->base->INTR_MASK |= 0xFFFFFFFF;
+    /* Set DMA PBL */
+    macCfg.dma_pbl = enet_pbl_32;
+    /* Set SARC */
+    macCfg.sarc = enet_sarc_replace_mac0;
+    macCfg.valid_max_count  = 1;
+
+    enet_int_config_t int_config = {.int_enable = 0, .int_mask = 0};
+
+    /* Set the interrupt enable mask */
+    int_config.int_enable = enet_normal_int_sum_en    /* Enable normal interrupt summary */
+                          | enet_receive_int_en;      /* Enable receive interrupt */
+    int_config.int_mask = enet_rgsmii_int_mask; /* Disable RGSMII interrupt */
+    int_config.mmc_intr_mask_rx = 0x03ffffff;   /* Disable all mmc rx interrupt events */
+    int_config.mmc_intr_mask_tx = 0x03ffffff;   /* Disable all mmc tx interrupt events */
+
+    int_config.mmc_intr_mask_rx = 0x03ffffff;   /* Disable all mmc rx interrupt events */
+    int_config.mmc_intr_mask_tx = 0x03ffffff;   /* Disable all mmc tx interrupt events */
+
+    /* Initialize enet controller */
+    enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, &int_config);
+    /* Disable LPI interrupt */
     enet_disable_lpi_interrupt(dev->base);
 
     if (dev->infType == enet_inf_rgmii) {
