@@ -19,6 +19,7 @@
 #include "hpm_lwip.h"
 #include "ethernetif.h"
 #include "lwip/tcpip.h"
+#include <los_task.h>
 
 
 static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
@@ -48,7 +49,7 @@ __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmi
 
 struct HpmEnetDevice enetDev[2] = {
     [0] = {
-        .isEnable = 1,
+        .isEnable = 0,
         .isDefault = 1,
         .name = "geth",
         .base = BOARD_ENET_RGMII,
@@ -75,8 +76,8 @@ struct HpmEnetDevice enetDev[2] = {
         },
     },
     [1] = {
-        .isEnable = 0,
-        .isDefault = 0,
+        .isEnable = 1,
+        .isDefault = 1,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
@@ -152,8 +153,13 @@ void enetDevInit(struct HpmEnetDevice *dev)
     int_config.mmc_intr_mask_rx = 0x03ffffff;   /* Disable all mmc rx interrupt events */
     int_config.mmc_intr_mask_tx = 0x03ffffff;   /* Disable all mmc tx interrupt events */
 
-    int_config.mmc_intr_mask_rx = 0x03ffffff;   /* Disable all mmc rx interrupt events */
-    int_config.mmc_intr_mask_tx = 0x03ffffff;   /* Disable all mmc tx interrupt events */
+    enet_tx_control_config_t enet_tx_control_config;
+
+    /*Get a default control config for tx descriptor */
+    enet_get_default_tx_control_config(dev->base, &enet_tx_control_config);
+
+    /* Set the control config for tx descriptor */
+    memcpy(&dev->desc.tx_control_config, &enet_tx_control_config, sizeof(enet_tx_control_config_t));
 
     /* Initialize enet controller */
     enet_controller_init(dev->base, dev->infType, &dev->desc, &macCfg, &int_config);
@@ -191,6 +197,7 @@ void enetDevInit(struct HpmEnetDevice *dev)
     netif_set_up(&dev->netif);
 }
 
+void ethernetif_phy_adaptive_thread_start(void);
 
 void HpmLwipInit(void)
 {
@@ -200,7 +207,71 @@ void HpmLwipInit(void)
 
     enetDevInit(&enetDev[0]);
     enetDevInit(&enetDev[1]);
+    ethernetif_phy_adaptive_thread_start();
 }
 
+void enet_self_adaptive_port_speed(struct HpmEnetDevice *dev)
+{
+    enet_phy_status_t status = {0};
+    enet_phy_status_t *last_status = &dev->last_status;
+
+    enet_line_speed_t line_speed[] = {enet_line_speed_10mbps, enet_line_speed_100mbps, enet_line_speed_1000mbps};
+    char *speed_str[] = {"10Mbps", "100Mbps", "1000Mbps"};
+    char *duplex_str[] = {"Half duplex", "Full duplex"};
+
+    if (!dev->isEnable)
+        return;
+
+    if (dev->infType == enet_inf_rgmii)
+        rtl8211_get_phy_status(dev->base, &status);
+
+    if (dev->infType == enet_inf_rmii)
+        rtl8201_get_phy_status(dev->base, &status);
+
+    if (memcmp(last_status, &status, sizeof(enet_phy_status_t)) != 0) {
+        memcpy(last_status, &status, sizeof(enet_phy_status_t));
+        if (status.enet_phy_link) {
+            printf("Link Status: Up\n");
+            printf("Link Speed:  %s\n", speed_str[status.enet_phy_speed]);
+            printf("Link Duplex: %s\n", duplex_str[status.enet_phy_duplex]);
+            enet_set_line_speed(dev->base, line_speed[status.enet_phy_speed]);
+            enet_set_duplex_mode(dev->base, status.enet_phy_duplex);
+        } else {
+            printf("Link Status: Down\n");
+        }
+    }
+}
+
+static VOID *ethernetif_phy_adaptive_thread(UINT32 arg)
+{
+    struct netif *netif = (struct netif *)arg;
+    struct HpmEnetDevice *devs = (struct netif *)arg;
+    printf("ethernetif_adaptive_thread run...\n");
+
+    while (1) {
+        enet_self_adaptive_port_speed(&devs[0]);
+        enet_self_adaptive_port_speed(&devs[1]);
+        sleep(1);
+    }
+}
+
+void ethernetif_phy_adaptive_thread_start(void)
+{
+    UINT32 taskID = LOS_ERRNO_TSK_ID_INVALID;
+    UINT32 ret;
+    TSK_INIT_PARAM_S task = {0};
+    /* Create host Task */
+    task.pfnTaskEntry = (TSK_ENTRY_FUNC)ethernetif_phy_adaptive_thread;
+    task.uwStackSize = 4096;
+    task.pcName = "phy";
+    task.usTaskPrio = 3;
+    task.uwArg = (UINTPTR)enetDev;
+    task.uwResved = LOS_TASK_STATUS_DETACHED;
+    ret = LOS_TaskCreate(&taskID, &task);
+    if (ret != LOS_OK) {
+        LWIP_DEBUGF(SYS_DEBUG, ("sys_thread_new: LOS_TaskCreate error %u\n", ret));
+        return -1;
+    }
+}
 
 APP_SERVICE_INIT(HpmLwipInit);
