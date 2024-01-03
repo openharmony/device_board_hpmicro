@@ -44,6 +44,7 @@ struct HpmEnetDevice {
     enet_desc_t desc;
     enet_mac_config_t mac;
     uint32_t rxSemHandle;
+    enet_phy_status_t last_status;
 };
 
 #endif
