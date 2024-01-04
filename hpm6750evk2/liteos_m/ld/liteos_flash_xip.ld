@@ -10,7 +10,7 @@ HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x40000;
 
 MEMORY
 {
-    XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = 16M
+    XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = _flash_size
     ILM (wx) : ORIGIN = 0x00000000, LENGTH = 256K
     DLM (w) : ORIGIN = 0x00080000, LENGTH = 256K
     AXI_SRAM (wx) : ORIGIN = 0x01080000, LENGTH = 512K    /* AXI SRAM0 */
