@@ -16,5 +16,9 @@ config BOARD
     string
     default "hpm6750evk2"
 
+config BOARD_FLASH_SIZE
+    int "flash size(MBytes) on board"
+    default 16
+
 endif #BOARD_HPM6750EVK2
 

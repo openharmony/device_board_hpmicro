@@ -40,6 +40,7 @@ config("public") {
     "-Wl,-melf32lriscv",
     "-nostartfiles",
     "-Wl,-T" + rebase_path("ld/liteos_flash_xip.ld"),
+    "-Wl,--defsym=_flash_size=${LOSCFG_BOARD_FLASH_SIZE}M",
     "-nostdlib",
   ]
 
