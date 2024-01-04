@@ -13,6 +13,5 @@
 
 config BOARD_HPM6750EVK2
     bool "hpm6750evk2"
-    select BOARD_COMPANY_HPMCIRO
     depends on SOC_COMPANY_HPMICRO
 
