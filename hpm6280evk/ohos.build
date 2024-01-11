@@ -1,0 +1,9 @@
+{
+  "parts": {
+    "device_hpm6280evk": {
+      "module_list": [
+      ]
+    }
+  },
+  "subsystem": "device_hpm6280evk"
+}

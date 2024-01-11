@@ -13,5 +13,5 @@
 
 config BOARD_HPM6750EVK2
     bool "hpm6750evk2"
-    depends on SOC_COMPANY_HPMICRO
+    depends on SOC_HPM6750
 
