@@ -11,23 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-if (ohos_kernel_type == "liteos_m") {
-  import("//kernel/liteos_m/liteos.gni")
-  module_name = get_path_info(rebase_path("."), "name")
-  module_group(module_name) {
-    modules = [ "drivers" ]
-    if (defined(LOSCFG_BOARD_HPM6750EVK2)) {
-      modules += [ "hpm6750evk2" ]
-    }
-
-    if (defined(LOSCFG_BOARD_HPM6280EVK)) {
-      modules += [ "hpm6280evk" ]
-    }
-
-    if (defined(LOSCFG_BOARD_HPM6800EVK)) {
-      modules += [ "hpm6800evk" ]
-    }
-
-    modules += []
-  }
-}
+config BOARD_HPM6800EVK
+    bool "hpm6800evk"
+    depends on SOC_HPM6880
