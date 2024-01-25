@@ -5,7 +5,7 @@
 
 ENTRY(_start)
 
-STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x4000;
+STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x2000;
 HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x40000;
 
 MEMORY
@@ -63,10 +63,10 @@ SECTIONS
 
     .text (__vector_load_addr__ + SIZEOF(.vectors)) : {
         . = ALIGN(8);
-        *(EXCLUDE_FILE (nx*.o*) .text)
-        *(EXCLUDE_FILE (nx*.o*) .text*)
-        *(EXCLUDE_FILE (nx*.o*) .rodata)
-        *(EXCLUDE_FILE (nx*.o*) .rodata*)
+        *(EXCLUDE_FILE (nx*.o* *los_*.o *riscv_hal*.o *liteos_m?kal*.o *lwip*.o) .text) /* OHOS */
+        *(EXCLUDE_FILE (nx*.o* *los_*.o *riscv_hal*.o *liteos_m?kal*.o *lwip*.o) .text*)
+        *(EXCLUDE_FILE (nx*.o* *los_*.o *riscv_hal*.o *liteos_m?kal*.o *lwip*.o) .rodata)
+        *(EXCLUDE_FILE (nx*.o* *los_*.o *riscv_hal*.o *liteos_m?kal*.o *lwip*.o) .rodata*)
         *(EXCLUDE_FILE (nx*.o*) .srodata)
         *(EXCLUDE_FILE (nx*.o*) .srodata*)
 
@@ -274,6 +274,10 @@ SECTIONS
         nx*.o*(.rodata*)
         nx*.o*(.srodata)
         nx*.o*(.srodata*)
+        *riscv_hal*.o (.text* .rodata*)
+        *los_*.o (.text* .rodata*)
+        *liteos_m?kal*.o (.text* .rodata*)
+        *lwip*.o (.text* .rodata*)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
     } > ILM
