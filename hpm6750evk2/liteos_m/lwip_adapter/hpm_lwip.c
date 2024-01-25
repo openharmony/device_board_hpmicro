@@ -49,16 +49,16 @@ __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmi
 
 struct HpmEnetDevice enetDev[2] = {
     [0] = {
-        .isEnable = 0,
+        .isEnable = 1,
         .isDefault = 1,
         .name = "geth",
         .base = BOARD_ENET_RGMII,
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rgmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
-        .ip = {192, 168, 50, 224},
+        .ip = {10, 10, 10, 224},
         .netmask = {255, 255, 255, 0},
-        .gw = {192, 168, 50, 1},
+        .gw = {10, 10, 10, 1},
         .desc = {
             .tx_desc_list_head = txDescTab0,
             .rx_desc_list_head = rxDescTab0,
@@ -76,16 +76,16 @@ struct HpmEnetDevice enetDev[2] = {
         },
     },
     [1] = {
-        .isEnable = 1,
+        .isEnable = 0,
         .isDefault = 1,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET1,
         .infType = enet_inf_rmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
-        .ip = {192, 168, 50, 223},
+        .ip = {10, 10, 10, 223},
         .netmask = {255, 255, 255, 0},
-        .gw = {192, 168, 50, 1},
+        .gw = {10, 10, 10, 1},
         .desc = {
             .tx_desc_list_head = txDescTab1,
             .rx_desc_list_head = rxDescTab1,
