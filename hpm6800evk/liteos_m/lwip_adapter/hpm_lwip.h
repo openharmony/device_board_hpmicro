@@ -24,8 +24,8 @@
 #include "lwip/err.h"
 #include "lwip/netif.h"
 
-#define ENET_TX_BUFF_COUNT  (10)
-#define ENET_RX_BUFF_COUNT  (64)
+#define ENET_TX_BUFF_COUNT  (16)
+#define ENET_RX_BUFF_COUNT  (96)
 #define ENET_RX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
 #define ENET_TX_BUFF_SIZE   ENET_MAX_FRAME_SIZE
 

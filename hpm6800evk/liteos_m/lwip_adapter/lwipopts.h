@@ -41,7 +41,7 @@
 #define LWIP_CHECKSUM_ON_COPY           0
 
 #undef TCP_WND
-#define TCP_WND 8192
+#define TCP_WND 16384
 
 #undef TCPIP_THREAD_STACKSIZE
 #define TCPIP_THREAD_STACKSIZE 4096
@@ -49,6 +49,11 @@
 #undef LWIP_CONFIG_NUM_SOCKETS
 #define LWIP_CONFIG_NUM_SOCKETS 16
 
+#undef MEMP_MEM_MALLOC
+#define MEMP_MEM_MALLOC                 0
+
+#undef LWIP_TCPIP_CORE_LOCKING_INPUT
+#define LWIP_TCPIP_CORE_LOCKING_INPUT 1
 
 /*
 Some MCUs allow computing and verifying the IP, UDP, TCP and ICMP checksums by hardware:
