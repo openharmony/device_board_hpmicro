@@ -34,19 +34,6 @@ __RW uint8_t rxBuff0[ENET_RX_BUFF_COUNT][ENET_RX_BUFF_SIZE]; /* Ethernet Receive
 static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t txBuff0[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmit Buffer */
 
-static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
-__RW enet_rx_desc_t rxDescTab1[ENET_RX_BUFF_COUNT] ; /* Ethernet Rx DMA Descriptor */
-
-static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
-__RW enet_tx_desc_t txDescTab1[ENET_TX_BUFF_COUNT] ; /* Ethernet Tx DMA Descriptor */
-
-static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
-__RW uint8_t rxBuff1[ENET_RX_BUFF_COUNT][ENET_RX_BUFF_SIZE]; /* Ethernet Receive Buffer */
-
-static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
-__RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmit Buffer */
-
-
 struct HpmEnetDevice enetDev[1] = {
     [0] = {
         .isEnable = 1,
@@ -56,9 +43,9 @@ struct HpmEnetDevice enetDev[1] = {
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rgmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x15},
-        .ip = {192, 168, 50, 224},
+        .ip = {10, 10, 10, 224},
         .netmask = {255, 255, 255, 0},
-        .gw = {192, 168, 50, 1},
+        .gw = {10, 10, 10, 1},
         .desc = {
             .tx_desc_list_head = txDescTab0,
             .rx_desc_list_head = rxDescTab0,
