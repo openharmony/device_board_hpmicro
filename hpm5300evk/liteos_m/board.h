@@ -22,10 +22,12 @@
 #include "hpm_soc_feature.h"
 
 #define BOARD_CPU_FREQ (480000000UL)
+#define TEST_APP_I2C_CLK_NAME clock_i2c0
 
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);
+void init_i2c_pins(I2C_Type *ptr);
 
 #if defined(__cplusplus)
 }

@@ -163,11 +163,11 @@ int HpmLittlefsDriverInit(struct HpmLittlefsCfg *lfsPart)
     option.option1.U = 0x00001000U;
     uint32_t blockSize;
     uint32_t blockCount;
-    //uint32_t intSave = LOS_IntLock();
+    uint32_t intSave = LOS_IntLock();
     hpm_stat_t status = rom_xpi_nor_auto_config(base, &ctx->xpiNorConfig, &option);
     rom_xpi_nor_get_property(base, &ctx->xpiNorConfig, xpi_nor_property_sector_size, &blockSize);
     __asm volatile("fence.i");
-    //LOS_IntRestore(intSave);
+    LOS_IntRestore(intSave);
     if (status != status_success) {
         printf("Error: rom_xpi_nor_auto_config\n");
         while (1);

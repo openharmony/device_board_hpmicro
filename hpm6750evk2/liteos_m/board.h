@@ -43,7 +43,7 @@
 
 #define BOARD_ENET_RMII_PTP_CLOCK       (clock_ptp1)
 
-
+#define TEST_APP_I2C_CLK_NAME clock_i2c0
 
 void board_init(void);
 void board_print_clock_freq(void);
@@ -54,6 +54,7 @@ hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
 hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal);
 hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr);
 hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr);
+void init_i2c_pins(I2C_Type *ptr);
 
 #if defined(__cplusplus)
 }

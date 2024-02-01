@@ -377,3 +377,17 @@ hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr)
 
     return status_invalid_argument;
 }
+
+void init_i2c_pins(I2C_Type *ptr)
+{
+    if (ptr == HPM_I2C1) {
+        HPM_IOC->PAD[IOC_PAD_PE12].FUNC_CTL = IOC_PE12_FUNC_CTL_I2C1_SDA
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        HPM_IOC->PAD[IOC_PAD_PE13].FUNC_CTL = IOC_PE13_FUNC_CTL_I2C1_SCL
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        HPM_IOC->PAD[IOC_PAD_PE12].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
+        HPM_IOC->PAD[IOC_PAD_PE13].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
+    } else {
+        ;
+    }
+}

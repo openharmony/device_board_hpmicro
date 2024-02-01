@@ -19,6 +19,7 @@
 #include <hpm_pmp_drv.h>
 #include <hpm_pllctlv2_drv.h>
 #include <hpm_pcfg_drv.h>
+#include <hpm_i2c_drv.h>
 /**
  * @brief FLASH configuration option definitions:
  * option[0]:
@@ -246,5 +247,20 @@ $$ |  $$ |$$ |      $$ | \\_/ $$ |$$ |\\$$$$$$$\\ $$ |      \\$$$$$$  |\r\n\
 \\__|  \\__|\\__|      \\__|     \\__|\\__| \\_______|\\__|       \\______/\r\n\
 ----------------------------------------------------------------------\r\n"};
     printf("%s", banner);
+}
+
+void init_i2c_pins(I2C_Type *ptr)
+{
+    if (ptr == HPM_I2C0) {
+        HPM_IOC->PAD[IOC_PAD_PB22].FUNC_CTL = IOC_PB22_FUNC_CTL_I2C0_SCL
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        HPM_IOC->PAD[IOC_PAD_PB23].FUNC_CTL = IOC_PB23_FUNC_CTL_I2C0_SDA
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        HPM_IOC->PAD[IOC_PAD_PB22].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+        HPM_IOC->PAD[IOC_PAD_PB23].PAD_CTL = IOC_PAD_PAD_CTL_OD_SET(1) | IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+    }  else {
+        while (1) {
+        }
+    }
 }
 

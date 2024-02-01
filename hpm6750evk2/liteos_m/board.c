@@ -391,3 +391,21 @@ hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr)
 {
     return enet_rgmii_set_clock_delay(ptr, BOARD_ENET_RGMII_TX_DLY, BOARD_ENET_RGMII_RX_DLY);
 }
+
+void init_i2c_pins(I2C_Type *ptr)
+{
+    if (ptr == HPM_I2C0) {
+        HPM_IOC->PAD[IOC_PAD_PZ11].FUNC_CTL = IOC_PB11_FUNC_CTL_I2C0_SCL
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        HPM_IOC->PAD[IOC_PAD_PZ10].FUNC_CTL = IOC_PB10_FUNC_CTL_I2C0_SDA
+                                            | IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
+        /* PZ port IO needs to configure BIOC as well */
+        HPM_BIOC->PAD[IOC_PAD_PZ11].FUNC_CTL = 3;
+        HPM_BIOC->PAD[IOC_PAD_PZ10].FUNC_CTL = 3;
+        HPM_IOC->PAD[IOC_PAD_PZ11].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
+        HPM_IOC->PAD[IOC_PAD_PZ10].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
+    } else {
+        while (1) {
+        }
+    }
+}
