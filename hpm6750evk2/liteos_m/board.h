@@ -21,7 +21,7 @@
 #include "hpm_soc.h"
 #include "hpm_soc_feature.h"
 
-#define BOARD_CPU_FREQ (816000000UL)
+#define BOARD_CPU_FREQ (648000000UL)
 
 
 /* enet section */
