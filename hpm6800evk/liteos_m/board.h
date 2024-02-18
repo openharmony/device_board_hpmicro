@@ -24,6 +24,14 @@
 #define BOARD_NAME "hpm6800evk"
 #define BOARD_CPU_FREQ (500000000UL)
 
+#define GPIOA(pin) (pin)
+#define GPIOB(pin) (pin + 32)
+#define GPIOC(pin) (pin + 32 * 2)
+#define GPIOD(pin) (pin + 32 * 3)
+#define GPIOE(pin) (pin + 32 * 4)
+#define GPIOF(pin) (pin + 32 * 5)
+#define GPIOY(pin) (pin + 32 * 14)
+#define GPIOZ(pin) (pin + 32 * 15)
 
 /* enet section */
 #define BOARD_ENET_COUNT                (1U)
@@ -43,6 +51,13 @@
 
 #define TEST_APP_I2C_CLK_NAME clock_i2c1
 
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOF(6)
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOF(7)
+
+#define BOARD_GPIO_OUT_TASK_GPIO1 GPIOB(11)
+#define BOARD_GPIO_OUT_TASK_GPIO2 GPIOB(12)
+#define BOARD_GPIO_OUT_TASK_GPIO3 GPIOB(13)
+
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);
@@ -52,7 +67,10 @@ hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
 hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal);
 hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr);
 hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr);
+void init_gpio_pins(void);
+void init_gpio_out_task_pins(void);
 void init_i2c_pins(I2C_Type *ptr);
+void init_spi_pins(SPI_Type *ptr);
 
 #if defined(__cplusplus)
 }
