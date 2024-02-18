@@ -378,6 +378,27 @@ hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr)
     return status_invalid_argument;
 }
 
+void init_gpio_pins(void)
+{ 
+    HPM_IOC->PAD[IOC_PAD_PF06].FUNC_CTL = 0;
+    HPM_IOC->PAD[IOC_PAD_PF06].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_HYS_MASK;
+
+    HPM_IOC->PAD[IOC_PAD_PF07].FUNC_CTL = 0;
+    HPM_IOC->PAD[IOC_PAD_PF07].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1) | IOC_PAD_PAD_CTL_HYS_MASK;
+}
+
+void init_gpio_out_task_pins(void)
+{
+    HPM_IOC->PAD[IOC_PAD_PB11].FUNC_CTL = 0;
+    HPM_IOC->PAD[IOC_PAD_PB11].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+
+    HPM_IOC->PAD[IOC_PAD_PB12].FUNC_CTL = 0;
+    HPM_IOC->PAD[IOC_PAD_PB12].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+
+    HPM_IOC->PAD[IOC_PAD_PB13].FUNC_CTL = 0;
+    HPM_IOC->PAD[IOC_PAD_PB13].PAD_CTL = IOC_PAD_PAD_CTL_PE_SET(1) | IOC_PAD_PAD_CTL_PS_SET(1);
+}
+
 void init_i2c_pins(I2C_Type *ptr)
 {
     if (ptr == HPM_I2C1) {
@@ -389,5 +410,15 @@ void init_i2c_pins(I2C_Type *ptr)
         HPM_IOC->PAD[IOC_PAD_PE13].PAD_CTL = IOC_PAD_PAD_CTL_OD_MASK;
     } else {
         ;
+    }
+}
+
+void init_spi_pins(SPI_Type *ptr)
+{
+    if (ptr == HPM_SPI3) {
+        HPM_IOC->PAD[IOC_PAD_PE05].FUNC_CTL = IOC_PE05_FUNC_CTL_SPI3_SCLK | IOC_PAD_FUNC_CTL_LOOP_BACK_SET(1);
+        HPM_IOC->PAD[IOC_PAD_PE06].FUNC_CTL = IOC_PE06_FUNC_CTL_SPI3_MISO;
+        HPM_IOC->PAD[IOC_PAD_PE07].FUNC_CTL = IOC_PE07_FUNC_CTL_SPI3_MOSI;
+        HPM_IOC->PAD[IOC_PAD_PE04].FUNC_CTL = IOC_PE04_FUNC_CTL_SPI3_CS_0;
     }
 }
