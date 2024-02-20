@@ -49,6 +49,9 @@
 #define IOC_PZ03_FUNC_CTL_SOC_PZ_03 IOC_PZ03_FUNC_CTL_GPIO_Z_03
 #define IOC_PAD_PAD_CTL_SMT_SET IOC_PAD_PAD_CTL_HYS_SET
 
+#define spi_device_num (1)
+#define I2C_BUS_NUM (0)
+
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);
