@@ -60,6 +60,9 @@
 #define BOARD_GPIO_OUT_TASK_GPIO2 GPIOB(12)
 #define BOARD_GPIO_OUT_TASK_GPIO3 GPIOB(13)
 
+#define spi_device_num (2)
+#define I2C_BUS_NUM (0)
+
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);

@@ -22,7 +22,6 @@
 #include "hpm_soc_feature.h"
 
 #define BOARD_CPU_FREQ (480000000UL)
-#define TEST_APP_I2C_CLK_NAME clock_i2c0
 
 #define GPIOA(pin) (pin)
 #define GPIOB(pin) (pin + 32)
@@ -33,19 +32,41 @@
 #define GPIOY(pin) (pin + 32 * 14)
 #define GPIOZ(pin) (pin + 32 * 15)
 
-#define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOB(4)
-#define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOB(5)
+/* enet section */
+#define BOARD_ENET_PPS           HPM_ENET0
+#define BOARD_ENET_PPS_IDX       enet_pps_0
+#define BOARD_ENET_PPS_PTP_CLOCK clock_ptp0
+
+#define BOARD_ENET_RMII HPM_ENET0
+#define BOARD_ENET_RMII_RST_GPIO
+#define BOARD_ENET_RMII_RST_GPIO_INDEX
+#define BOARD_ENET_RMII_RST_GPIO_PIN
+#define BOARD_ENET_RMII             HPM_ENET0
+#define BOARD_ENET_RMII_INT_REF_CLK (1U)
+#define BOARD_ENET_RMII_PTP_CLOCK   (clock_ptp0)
+#define BOARD_ENET_RMII_PPS0_PINOUT (1)
+
+#define TEST_APP_I2C_CLK_NAME clock_i2c0
+
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOZ(2)
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOZ(3)
 
 #define BOARD_GPIO_OUT_TASK_GPIO1 GPIOB(11)
 #define BOARD_GPIO_OUT_TASK_GPIO2 GPIOB(12)
 #define BOARD_GPIO_OUT_TASK_GPIO3 GPIOB(13)
 
-#define spi_device_num (1)
+#define spi_device_num (3)
 #define I2C_BUS_NUM (0)
 
 void board_init(void);
 void board_print_clock_freq(void);
 void board_print_banner(void);
+
+hpm_stat_t board_reset_enet_phy(ENET_Type *ptr);
+hpm_stat_t board_init_enet_pins(ENET_Type *ptr);
+hpm_stat_t board_init_enet_rmii_reference_clock(ENET_Type *ptr, bool internal);
+hpm_stat_t board_init_enet_rgmii_clock_delay(ENET_Type *ptr);
+hpm_stat_t board_init_enet_ptp_clock(ENET_Type *ptr);
 void init_gpio_pins(void);
 void init_gpio_out_task_pins(void);
 void init_i2c_pins(I2C_Type *ptr);
