@@ -54,12 +54,13 @@
 #define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOF(6)
 #define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOF(7)
 
-#define BOARD_GPIO_OUT_TASK_GPIO1 GPIOB(11)
-#define BOARD_GPIO_OUT_TASK_GPIO2 GPIOB(12)
-#define BOARD_GPIO_OUT_TASK_GPIO3 GPIOB(13)
+#define BOARD_GPIO_OUT_TASK_GPIO1 GPIOF(1)
+#define BOARD_GPIO_OUT_TASK_GPIO2 GPIOF(2)
+#define BOARD_GPIO_OUT_TASK_GPIO3 GPIOF(5)
 
 #define spi_device_num (3)
 #define I2C_BUS_NUM (1)
+#define TEST_I2C_CLOCK_NAME clock_i2c0
 
 void board_init(void);
 void board_print_clock_freq(void);

@@ -62,6 +62,7 @@
 
 #define spi_device_num (2)
 #define I2C_BUS_NUM (0)
+#define TEST_I2C_CLOCK_NAME clock_i2c0
 
 void board_init(void);
 void board_print_clock_freq(void);
