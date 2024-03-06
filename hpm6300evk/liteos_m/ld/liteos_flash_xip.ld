@@ -6,7 +6,7 @@
 ENTRY(_start)
 
 STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x2000;
-HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 120K;
+HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 128K;
 
 MEMORY
 {
@@ -259,7 +259,7 @@ SECTIONS
         PROVIDE (__edata = .);
         PROVIDE (_edata = .);
         PROVIDE (edata = .);
-    } > DLM
+    } > ILM
 
     __fast_load_addr__ = etext + SIZEOF(.data);
     .fast : AT(__fast_load_addr__) {
@@ -348,7 +348,7 @@ SECTIONS
 
     .fast_ram (NOLOAD) : {
         KEEP(*(.fast_ram))
-    } > DLM
+    } > ILM
 
     .heap (NOLOAD) : {
         . = ALIGN(8);

@@ -6,7 +6,7 @@
 ENTRY(_start)
 
 STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x2000;
-HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x20000;
+HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 130K;
 
 MEMORY
 {
