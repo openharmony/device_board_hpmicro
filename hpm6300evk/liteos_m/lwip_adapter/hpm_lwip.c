@@ -47,16 +47,16 @@ static ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t txBuff1[ENET_TX_BUFF_COUNT][ENET_TX_BUFF_SIZE]; /* Ethernet Transmit Buffer */
 
 
-struct HpmEnetDevice enetDev[2] = {
+struct HpmEnetDevice enetDev[1] = {
     [0] = {
-        .isEnable = 0,
+        .isEnable = 1,
         .isDefault = 1,
         .name = "eth",
         .base = BOARD_ENET_RMII,
         .irqNum = IRQn_ENET0,
         .infType = enet_inf_rmii,
         .macAddr = {0x98, 0x2C, 0xBC, 0xB1, 0x9F, 0x17},
-        .ip = {10, 10, 10, 223},
+        .ip = {10, 10, 10, 224},
         .netmask = {255, 255, 255, 0},
         .gw = {10, 10, 10, 1},
         .desc = {
