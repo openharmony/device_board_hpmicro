@@ -33,15 +33,16 @@
 #define GPIOY(pin) (pin + 32 * 14)
 #define GPIOZ(pin) (pin + 32 * 15)
 
-#define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOB(4)
-#define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOB(5)
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO1 GPIOA(9)
+#define BOARD_GPIO_IN_IRQ_TASK_GPIO2 GPIOA(10)
 
-#define BOARD_GPIO_OUT_TASK_GPIO1 GPIOB(11)
-#define BOARD_GPIO_OUT_TASK_GPIO2 GPIOB(12)
-#define BOARD_GPIO_OUT_TASK_GPIO3 GPIOB(13)
+#define BOARD_GPIO_OUT_TASK_GPIO1 GPIOA(23)
+#define BOARD_GPIO_OUT_TASK_GPIO2 GPIOA(25)
+#define BOARD_GPIO_OUT_TASK_GPIO3 GPIOA(26)
 
 #define spi_device_num (1)
 #define I2C_BUS_NUM (0)
+#define TEST_I2C_CLOCK_NAME clock_i2c0
 
 void board_init(void);
 void board_print_clock_freq(void);
