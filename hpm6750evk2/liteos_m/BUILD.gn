@@ -58,6 +58,10 @@ config("public") {
       "-lmodule_ActsDfxFuncTest",
       "-lmodule_ActsSamgrTest",
       "-lhuks_test_common",
+      "-lmodule_ActsHuksHalFunctionTest",
+      "-lmodule_ActsUpdaterFuncTest",
+      "-lhota",
+      "-lhal_update_static"
     ]
   }
 
