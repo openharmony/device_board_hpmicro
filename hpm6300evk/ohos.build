@@ -1,9 +1,0 @@
-{
-  "parts": {
-    "device_hpm6300evk": {
-      "module_list": [
-      ]
-    }
-  },
-  "subsystem": "device_hpm6300evk"
-}
