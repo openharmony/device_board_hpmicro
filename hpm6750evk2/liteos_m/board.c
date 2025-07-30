@@ -165,7 +165,6 @@ void board_init_clock(void)
     clock_add_to_group(clock_mot3, 0);
     clock_add_to_group(clock_acmp, 0);
     clock_add_to_group(clock_dao, 0);
-    clock_add_to_group(clock_msyn, 0);
     clock_add_to_group(clock_lmm0, 0);
     clock_add_to_group(clock_lmm1, 0);
 

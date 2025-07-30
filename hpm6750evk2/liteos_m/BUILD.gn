@@ -41,6 +41,8 @@ config("public") {
     "-nostartfiles",
     "-Wl,-T" + rebase_path("ld/liteos_flash_xip.ld"),
     "-Wl,--defsym=_flash_size=${LOSCFG_BOARD_FLASH_SIZE}M",
+    "-Wl,--defsym=_stack_size=0x2000",
+    "-Wl,--defsym=_heap_size=0x20000",
     "-nostdlib",
   ]
 
